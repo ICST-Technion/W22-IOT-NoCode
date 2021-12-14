@@ -41,3 +41,34 @@
 * mos put fs/init.js sends the updated .js code to the device - should be called on each change we want to send
 * mos call Sys.Reboot - restarts the device with the updated code
 * mos wifi - setups the wifi on the device and reboots it
+
+
+## Device configuration JSON
+The cloud will send configuration updates to the following topic:
+
+`/devices/<device id>/config`
+
+And the device should respond with a corresponding state update to the following topic:
+
+`/devices/<device id>/state`
+
+The configuration is of the following format:
+
+```
+config/state = {
+	"pins": [... list of pins ...]
+}
+```
+
+Each pin is of the following format:
+
+```
+{
+	number: int,
+	value: bool
+}
+```
+
+If a pin is missing from the config JSON that means it is not physically used.
+
+
