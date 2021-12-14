@@ -15,7 +15,7 @@
 
 * Set default values for gcloud:
 
-	`gcloud config set project IOT-project`
+	`gcloud config set project YOUR_PROJECT_ID`
 * Create PubSub topic for device data:
 	
 	`gcloud pubsub topics create iot-topic`
@@ -29,10 +29,6 @@
 	`gcloud iot registries create iot-registry --region europe-west1 --event-notification-config=topic=iot-topic`
 
 ## Setup device
-* Get project ID of your new project:
-	
-	`gcloud projects list`
-
-* Register device on Google IoT Core. If a device is already registered, this command deletes it, then registers again. Note that this command is using YOUR_PROJECT_ID instead of YOUR_PROJECT_NAME. Take the project ID from the result of your previous command:
+* Get project ID of your new project and then run the following command in mos:
 
 	`mos gcp-iot-setup --gcp-project YOUR_PROJECT_ID --gcp-region europe-west1 --gcp-registry iot-registry`
