@@ -32,3 +32,12 @@
 * Get project ID of your new project and then run the following command in mos:
 
 	`mos gcp-iot-setup --gcp-project YOUR_PROJECT_ID --gcp-region europe-west1 --gcp-registry iot-registry`
+
+
+## Some tips when working with Mongoose
+* mos build - builds the base javascript engine - should be done only once
+* mos flash - sends the engine to the device
+* mos gcp-iot-setup - registers the device with Google and sends the certificate to the device
+* mos put fs/init.js sends the updated .js code to the device - should be called on each change we want to send
+* mos call Sys.Reboot - restarts the device with the updated code
+* mos wifi - setups the wifi on the device and reboots it
