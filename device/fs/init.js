@@ -2,28 +2,35 @@ load('api_config.js');
 load('api_gpio.js');
 load('api_mqtt.js');
 
+// Device identifier given by Google Cloud IoT Core
+let device_id = Cfg.get('device.id');
 
-let config_topic = '/devices/' + Cfg.get('device.id') + '/config';
-let state_topic = '/devices/' + Cfg.get('device.id') + '/state';
+// Topic to receive configuration
+let config_topic = '/devices/' + device_id + '/config';
 
-let state = {
-	pins: []
-};
+// Topic to publish state
+let state_topic = '/devices/' + device_id + '/state';
 
-for(let i=0; i<30; ++i) {
-	state.pins[i] = 0;
+
+// list of all pins
+let pins = [0, // 0
+			0,0,0,0,0,0,0,0,0,0, // 1-10
+			0,0,0,0,0,0,0,0,0,0, // 11-20
+			1,1,1,0,0,0,0,0,0,0 // 21-30
+			];
+
+// set all available pins to MODE_OUTPUT and value to 0
+for(let i=0; i<pins.length; ++i) {
+	if(pins[i]) {
+		print("pin", i, "set to MODE_OUTPUT");
+		GPIO.set_mode(i, GPIO.MODE_OUTPUT);
+		print("pin", i, "is 0");
+		GPIO.write(i, 0);
+	}
 }
 
-
-print("Started with DeviceID: " + Cfg.get('device.id'));
+print("Started with DeviceID: " + device_id);
 print("Listening for configuration on: " + config_topic + " topic");
-
-for(let i=21; i<=23; ++i) {  
-	print("Setting pin ",i, "to MODE_OUTPUT");
-	GPIO.set_mode(i, GPIO.MODE_OUTPUT);
-	state.pins[i] = 0;
-	GPIO.write(i, 0);
-}
 
 
 MQTT.sub(config_topic, function(conn, topic, msg) {
@@ -35,55 +42,47 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 	print("Configuraiton: ", obj);
 	
 	if(!obj.pins) {
-		print('"pins" property is missing fron configuration JSON');
+		print('"pins" property is missing from configuration JSON');
 		return;
 	}
 	
-	let new_state = {
+	let state = {
 		pins: []
 	};
+
+	// create a copy of pins into all_pins
+	let all_pins = [];
+	for(let i=0; i<pins.length; ++i) {
+		all_pins[i] = pins[i];
+	}
 	
-	// update existing pins
+	// set pins
 	for(let i=0; i<obj.pins.length; ++i) {
 		
-		// new state
+		// pin object
 		let pin = obj.pins[i];
-		let found = 0;
 		
-		print("Updating pin", pin.number, "from", state.pins[pin.number], "to", pin.value);
-		state.pins[pin.number] = pin.value;
+		print("pin", pin.number, "is", pin.value);
+
+		all_pins[pin.number] = 0; // it means we checked it
+
 		GPIO.write(pin.number, pin.value);
 		
-		new_state.pins.push({
+		state.pins.push({
 			number: pin.number,
 			value: pin.value
 		});
-		
 	}
 
-	// removing unused pins (that existed in state and now do not)
-	for(let j=21; j<=23; ++j) {
-		
-		let state_pin = state.pins[j];
-		let found = 0;
-		
-		for(let i=0; i<obj.pins.length; ++i) {
-			let pin_number = obj.pins[i].number;
-			
-			if(pin_number === j) {
-				found = 1;
-				break;
-			}
-		}
-		
-		if(!found) {
-			GPIO.write(j, 0);
-			print("Removing pin", j);
+	// set all not checked pins to 0
+	for(let i=0; i<all_pins.length; ++i) {
+		if(all_pins[i]) {
+			print("pin", i, "is 0");
+			GPIO.write(i, 0);
 		}
 	}
 	
-	state = new_state;
-	
+	// publish state
 	let publish_message = JSON.stringify(state);
 	print("Publishing state to ", state_topic, "topic with the following message:", publish_message);
 	MQTT.pub(state_topic, publish_message, 1);
