@@ -9,7 +9,7 @@
 	` gcloud projects create IOT-project `
 
 	(**IOT-project** is our project name)
-* Add permissions for IoT Core:
+* Add permissions for IoT Core (so a cloud function would be able to publish):
 
 	`gcloud projects add-iam-policy-binding IOT-project --member=serviceAccount:cloud-iot@system.gserviceaccount.com --role=roles/pubsub.publisher`
 
@@ -69,6 +69,6 @@ Each pin is of the following format:
 }
 ```
 
-If a pin is missing from the config JSON that means it is not physically used.
+If a pin is missing from the config JSON it will be turned off on the device.
 
 
