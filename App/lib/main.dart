@@ -14,7 +14,7 @@ class IotApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'IOT app',
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
       home: SignInPage()
     );
   }

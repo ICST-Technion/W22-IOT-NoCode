@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import "package:http/http.dart" as http;
 import 'dart:convert' show json;
 
@@ -9,16 +10,12 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
     'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
   ],
 );
 
 /// Entrypoint example for various sign-in flows with Firebase.
 class SignInPage extends StatefulWidget {
   SignInPage({Key? key}) : super(key: key);
-
-  /// The page title.
-  final String title = 'Sign In & Out';
 
   @override
   State<StatefulWidget> createState() => _SignInPageState();
@@ -49,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Sign In'),
+          title: const Text('IOT No-Code'),
         ),
         body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),
@@ -63,6 +60,24 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildBody() {
 
     GoogleSignInAccount? user = _currentUser;
+
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const Text("IOT No-Code",
+                style: TextStyle(
+                  fontSize: 32,
+                  color: Colors.black54,
+                )),
+            SignInButton(
+              Buttons.GoogleDark,
+
+              onPressed: _handleSignIn,
+            )
+          ],
+        );
+
 
     if (user != null) {
       return Column(
