@@ -10,6 +10,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
     'email',
+    // 'https://www.googleapis.com/auth/contacts.readonly'
   ],
 );
 
@@ -30,11 +31,13 @@ class _SignInPageState extends State<SignInPage> {
   void initState() {
     super.initState();
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+      print("User sign-in state changed");
       setState(() {
         _currentUser = account;
       });
       if (_currentUser != null) {
-        _handleGetContact(_currentUser!);
+        // _handleGetContact(_currentUser!);
+        print("User is signed-in :)");
       }
     });
 
@@ -146,7 +149,9 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _handleSignIn() async {
     try {
+      print("Starting sign-in...");
       await _googleSignIn.signIn();
+      print("Ended sign-in");
     } catch (error) {
       print(error);
     }
