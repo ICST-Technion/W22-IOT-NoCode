@@ -76,6 +76,7 @@ If a pin is missing from the config JSON it will be turned off on the device.
 Run `gcloud app create --region=europe-west`
 And then `gcloud alpha firestore databases create --project=iot-project-b52bb --region=europe-west`
 
+Use `firebase deploy` to deploy the functions
 
 
 ## Tasks to do

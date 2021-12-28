@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace # uncomment for debugging
+
+export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
+export CLOUD_REGION="europe-west1"
+export REGISTRY_ID="iot-registry"
+export TOPIC="iot-topic"
+
+cd functions
+npm install
+    firebase functions:config:set \
+    iot.core.region=$CLOUD_REGION \
+    iot.core.registry=$REGISTRY_ID \
+    iot.core.topic=$TOPIC
+firebase use $GCLOUD_PROJECT
+firebase deploy --only functions
