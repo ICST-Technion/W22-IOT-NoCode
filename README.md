@@ -71,6 +71,13 @@ Each pin is of the following format:
 
 If a pin is missing from the config JSON it will be turned off on the device.
 
+
+## Create database
+Run `gcloud app create --region=europe-west`
+And then `gcloud alpha firestore databases create --project=iot-project-b52bb --region=europe-west`
+
+
+
 ## Tasks to do
 - [x] Send configuration and receive state between IoT core and the ESP32
 - [x] Sign-in with Google
