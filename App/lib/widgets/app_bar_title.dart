@@ -15,14 +15,14 @@ class AppBarTitle extends StatelessWidget {
         ),
         SizedBox(width: 8),
         Text(
-          'FlutterFire',
+          'IOT',
           style: TextStyle(
             color: CustomColors.firebaseYellow,
             fontSize: 18,
           ),
         ),
         Text(
-          ' Authentication',
+          ' No Code',
           style: TextStyle(
             color: CustomColors.firebaseOrange,
             fontSize: 18,
