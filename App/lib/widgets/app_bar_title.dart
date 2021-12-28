@@ -17,14 +17,14 @@ class AppBarTitle extends StatelessWidget {
         Text(
           'IOT',
           style: TextStyle(
-            color: CustomColors.firebaseYellow,
+            color: CustomColors.yellow,
             fontSize: 18,
           ),
         ),
         Text(
           ' No Code',
           style: TextStyle(
-            color: CustomColors.firebaseOrange,
+            color: CustomColors.orange,
             fontSize: 18,
           ),
         ),

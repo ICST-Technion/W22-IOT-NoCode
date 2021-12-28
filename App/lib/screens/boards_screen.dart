@@ -6,18 +6,19 @@ import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 
-class UserInfoScreen extends StatefulWidget {
-  const UserInfoScreen({Key? key, required User user})
+class BoardsScreen extends StatefulWidget {
+  const BoardsScreen({Key? key, required User user})
       : _user = user,
         super(key: key);
 
   final User _user;
 
   @override
-  _UserInfoScreenState createState() => _UserInfoScreenState();
+  _BoardsScreenState createState() => _BoardsScreenState();
 }
 
-class _UserInfoScreenState extends State<UserInfoScreen> {
+class _BoardsScreenState extends State<BoardsScreen> {
+
   late User _user;
   bool _isSigningOut = false;
 
@@ -47,7 +48,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     super.initState();
   }
 
-  Future<void> _onMenuChanged (int index) async {
+  Future<void> _onMenuChanged(int index) async {
     if(index == 1) {
       setState(() {
         _isSigningOut = true;
@@ -63,14 +64,22 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     }
   }
 
+  void _onAddClicked() {
+    print("pressed");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.firebaseNavy,
+      backgroundColor: CustomColors.navy,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: CustomColors.firebaseNavy,
+        backgroundColor: CustomColors.navy,
         title: AppBarTitle(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: _onAddClicked,
       ),
       bottomNavigationBar: BottomNavbar(onChanged: _onMenuChanged),
     );

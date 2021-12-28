@@ -12,7 +12,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.firebaseNavy,
+      backgroundColor: CustomColors.navy,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -40,14 +40,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     Text(
                       'FlutterFire',
                       style: TextStyle(
-                        color: CustomColors.firebaseYellow,
+                        color: CustomColors.yellow,
                         fontSize: 40,
                       ),
                     ),
                     Text(
                       'Authentication',
                       style: TextStyle(
-                        color: CustomColors.firebaseOrange,
+                        color: CustomColors.orange,
                         fontSize: 40,
                       ),
                     ),
@@ -64,7 +64,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   }
                   return CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      CustomColors.firebaseOrange,
+                      CustomColors.orange,
                     ),
                   );
                 },

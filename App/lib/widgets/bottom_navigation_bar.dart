@@ -10,8 +10,8 @@ class BottomNavbar extends StatelessWidget {
     return BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.dashboard),
+            label: 'Boards',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.logout),

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:app/screens/user_info_screen.dart';
+import 'package:app/screens/boards_screen.dart';
 import 'package:app/utils/authentication.dart';
 
 class GoogleSignInButton extends StatefulWidget {
@@ -42,7 +42,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           if (user != null) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => UserInfoScreen(
+                builder: (context) => BoardsScreen(
                   user: user,
                 ),
               ),
@@ -54,7 +54,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: const <Widget>[
               Image(
                 image: AssetImage("assets/google_logo.png"),
                 height: 35.0,
