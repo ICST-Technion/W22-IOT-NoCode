@@ -5,6 +5,8 @@ import 'package:app/screens/sign_in_screen.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
+import 'package:app/screens/qr_screen.dart';
+
 
 class BoardsScreen extends StatefulWidget {
   const BoardsScreen({Key? key, required User user})
@@ -64,8 +66,12 @@ class _BoardsScreenState extends State<BoardsScreen> {
     }
   }
 
-  void _onAddClicked() {
-    print("pressed");
+  Future<void> _onAddClicked() async {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => ScanPage()
+      ),
+    );
   }
 
   @override
