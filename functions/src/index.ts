@@ -3,6 +3,8 @@ import * as functions from "firebase-functions";
 import * as iot from "@google-cloud/iot";
 const client = new iot.v1.DeviceManagerClient();
 
+admin.initializeApp();
+
 // On config change -> send to IoT core
 exports.configUpdate = functions.region(functions.config().iot.core.region).firestore.document("board-configs/{boardId}")
     .onWrite(
