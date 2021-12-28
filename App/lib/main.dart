@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:app/firebase_options.dart';
-import './signin_page.dart';
+import 'screens/sign_in_screen.dart';
 
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(IotApp());
+void main() {
+  runApp(MyApp());
 }
-class IotApp extends StatelessWidget {
+
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'IOT app',
-      theme: ThemeData.light(),
-      home: SignInPage()
+      title: 'FlutterFire Samples',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        brightness: Brightness.dark,
+      ),
+      home: SignInScreen(),
     );
   }
 }
