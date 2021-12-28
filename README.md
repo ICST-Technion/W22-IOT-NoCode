@@ -71,4 +71,9 @@ Each pin is of the following format:
 
 If a pin is missing from the config JSON it will be turned off on the device.
 
-
+## Tasks to do
+- [x] Send configuration and receive state between IoT core and the ESP32
+- [ ] Sign-in with Google
+- [ ] Add device (QR code)
+- [ ] The device updates its DB record on first start
+- [ ] Setup device WIFI through Bluethooth (in the "add device" screen)
