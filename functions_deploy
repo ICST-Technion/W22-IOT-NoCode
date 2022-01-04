@@ -17,4 +17,4 @@ npm install
     iot.core.registry=$REGISTRY_ID \
     iot.core.topic=$TOPIC
 firebase use $GCLOUD_PROJECT
-firebase deploy --only functions
+firebase deploy
