@@ -8,13 +8,20 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Boards',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
+            icon: Image.asset(
+              'assets/logo.png',
+              height: 40,
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon (Icons.logout),
             label: 'Sign out'
           )
         ],

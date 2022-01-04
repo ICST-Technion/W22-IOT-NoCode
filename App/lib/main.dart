@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => SignInScreen(),
-        '/boards': (context) => BoardsScreen(),
-        '/scan': (context) => ScanScreen(),
+        '/boards': (context) => BoardsScreen(title: "Boards"),
+        '/scan': (context) => ScanScreen(title: "Scan"),
       },
     );
   }

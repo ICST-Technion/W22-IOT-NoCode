@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
-import 'package:app/screens/sign_in_screen.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
-import 'package:app/screens/scan_screen.dart';
 
 
 class BoardsScreen extends StatefulWidget {
+  const BoardsScreen({Key key, this.title}) : super(key: key);
+
+  final String title;
 
   @override
   _BoardsScreenState createState() => _BoardsScreenState();
@@ -17,26 +18,7 @@ class BoardsScreen extends StatefulWidget {
 
 class _BoardsScreenState extends State<BoardsScreen> {
 
-  User _user = FirebaseAuth.instance.currentUser;
-
-  Route _routeToSignInScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
+  final User _user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -44,8 +26,10 @@ class _BoardsScreenState extends State<BoardsScreen> {
   }
 
   Future<void> _onMenuChanged(int index) async {
-    if(index == 1) {
+    if(index == 2) {
       await Authentication.signOut(context: context);
+      final snackBar = SnackBar(content: Text('Signed out'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Navigator.pushReplacementNamed(context, "/");
     }
   }
@@ -57,7 +41,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: CustomColors.navy,
-        title: AppBarTitle(),
+        title: AppBarTitle(title: widget.title),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -87,8 +71,8 @@ class _BoardsScreenState extends State<BoardsScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading: Icon(Icons.developer_board),
-                        title: Text(data.id),
+                        leading: Icon(Icons.memory, size: 40),
+                        title: Text(data.id, style: TextStyle(fontSize: 24)),
                         onTap: () => _selectDevice(context, data),
                       )
                     ],
@@ -102,7 +86,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
 
   /// Show user panel to send a device command
   void _selectDevice(BuildContext context, DocumentSnapshot data) {
-    print("device selected")
+    print("device selected");
     // showModalBottomSheet(
     //   context: context,
     //   builder: (BuildContext context) {

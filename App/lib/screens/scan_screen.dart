@@ -12,6 +12,9 @@ import 'package:camera/camera.dart';
 enum DetectionState {empty, invalid, detected}
 
 class ScanScreen extends StatefulWidget {
+  const ScanScreen({Key key, this.title}) : super(key: key);
+
+  final String title;
 
   @override
   _ScanScreen createState() => _ScanScreen();
@@ -72,7 +75,7 @@ class _ScanScreen extends State<ScanScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: CustomColors.navy,
-        title: AppBarTitle(),
+        title: AppBarTitle(title: widget.title),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
