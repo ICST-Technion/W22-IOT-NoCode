@@ -32,7 +32,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           setState(() {
             _isSigningIn = true;
           });
-          User? user =
+          User user =
           await Authentication.signInWithGoogle(context: context);
 
           setState(() {
@@ -40,13 +40,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           });
 
           if (user != null) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => BoardsScreen(
-                  user: user,
-                ),
-              ),
-            );
+            Navigator.pushReplacementNamed(context, "/boards");
           }
         },
         child: Padding(

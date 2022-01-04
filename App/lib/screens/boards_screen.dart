@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
@@ -5,15 +6,10 @@ import 'package:app/screens/sign_in_screen.dart';
 import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
-import 'package:app/screens/qr_screen.dart';
+import 'package:app/screens/scan_screen.dart';
 
 
 class BoardsScreen extends StatefulWidget {
-  const BoardsScreen({Key? key, required User user})
-      : _user = user,
-        super(key: key);
-
-  final User _user;
 
   @override
   _BoardsScreenState createState() => _BoardsScreenState();
@@ -21,8 +17,7 @@ class BoardsScreen extends StatefulWidget {
 
 class _BoardsScreenState extends State<BoardsScreen> {
 
-  late User _user;
-  bool _isSigningOut = false;
+  User _user = FirebaseAuth.instance.currentUser;
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
@@ -45,33 +40,14 @@ class _BoardsScreenState extends State<BoardsScreen> {
 
   @override
   void initState() {
-    _user = widget._user;
-
     super.initState();
   }
 
   Future<void> _onMenuChanged(int index) async {
     if(index == 1) {
-      setState(() {
-        _isSigningOut = true;
-      });
-
       await Authentication.signOut(context: context);
-
-      setState(() {
-        _isSigningOut = false;
-      });
-
-      Navigator.of(context).pushReplacement(_routeToSignInScreen());
+      Navigator.pushReplacementNamed(context, "/");
     }
-  }
-
-  Future<void> _onAddClicked() async {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => ScanPage()
-      ),
-    );
   }
 
   @override
@@ -85,9 +61,27 @@ class _BoardsScreenState extends State<BoardsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: _onAddClicked,
+        onPressed: () => _registerDevice(context),
       ),
       bottomNavigationBar: BottomNavbar(onChanged: _onMenuChanged),
     );
   }
+
+  /// Scan a device, then publish the result
+  void _registerDevice(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, '/scan');
+    if (result == null) return;
+
+    // Attach the current user as the device owner
+    final Map<String, dynamic> device = result;
+    device['owner'] = _user.uid;
+
+    final String deviceId = device['serial_number'];
+    var pendingRef = FirebaseFirestore.instance.collection('pending').doc(deviceId);
+    pendingRef.set(device);
+
+    final snackBar = SnackBar(content: Text('Registering device'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
 }

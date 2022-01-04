@@ -85,3 +85,5 @@ Use `./functions_deploy` script to deploy the functions
 - [ ] Add device (QR code)
 - [ ] The device updates its DB record on first start
 - [ ] Setup device WIFI through Bluethooth (in the "add device" screen)
+- [ ] Make cloud functions more typed
+- [ ] BUG: If device already exists, make sure to remove the "pending" records 
