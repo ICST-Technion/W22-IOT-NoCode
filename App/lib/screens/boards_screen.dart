@@ -64,7 +64,51 @@ class _BoardsScreenState extends State<BoardsScreen> {
         onPressed: () => _registerDevice(context),
       ),
       bottomNavigationBar: BottomNavbar(onChanged: _onMenuChanged),
+      body: _queryDeviceList()
     );
+  }
+
+  /// List devices owned by the authenticated user
+  Widget _queryDeviceList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('boards')
+          .where('owner', isEqualTo: _user.uid)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError)
+          return Text('Error: ${snapshot.error}');
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          default:
+            return Column(children: snapshot.data.docs.map((DocumentSnapshot data) {
+                return Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.developer_board),
+                        title: Text(data.id),
+                        onTap: () => _selectDevice(context, data),
+                      )
+                    ],
+                  )
+                );
+              }).toList());
+        }
+      },
+    );
+  }
+
+  /// Show user panel to send a device command
+  void _selectDevice(BuildContext context, DocumentSnapshot data) {
+    print("device selected")
+    // showModalBottomSheet(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return DeviceConfigPanel(device: device);
+    //   },
+    // );
   }
 
   /// Scan a device, then publish the result
