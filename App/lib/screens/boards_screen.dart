@@ -23,6 +23,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
   @override
   void initState() {
     super.initState();
+    print(_user);
   }
 
   Future<void> _onMenuChanged(int index) async {
@@ -54,16 +55,22 @@ class _BoardsScreenState extends State<BoardsScreen> {
 
   /// List devices owned by the authenticated user
   Widget _queryDeviceList() {
+
+    if (_user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('boards')
           .where('owner', isEqualTo: _user.uid)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError)
+        if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
+        }
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           default:
             return Column(children: snapshot.data.docs.map((DocumentSnapshot data) {
                 return Card(
@@ -71,8 +78,8 @@ class _BoardsScreenState extends State<BoardsScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading: Icon(Icons.memory, size: 40),
-                        title: Text(data.id, style: TextStyle(fontSize: 24)),
+                        leading: const Icon(Icons.memory, size: 40),
+                        title: Text(data.id, style: const TextStyle(fontSize: 24)),
                         onTap: () => _selectDevice(context, data),
                       )
                     ],
@@ -108,7 +115,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
     var pendingRef = FirebaseFirestore.instance.collection('pending').doc(deviceId);
     pendingRef.set(device);
 
-    final snackBar = SnackBar(content: Text('Registering device'));
+    const snackBar = SnackBar(content: Text('Registering device'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 

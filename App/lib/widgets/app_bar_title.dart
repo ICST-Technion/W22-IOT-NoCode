@@ -13,7 +13,7 @@ class AppBarTitle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Center(
-            child: Text(title, style: TextStyle(fontSize: 26),)
+            child: Text(title, style: const TextStyle(fontSize: 26),)
         ),
       ],
     );

@@ -85,6 +85,6 @@ Use `./functions_deploy` script to deploy the functions
 - [x] Add device (QR code)
 - [ ] Feature: Device window
 - [ ] BONUS: Setup device WIFI through Bluethooth (in the "add device" screen)
-- [ ] Make cloud functions more typed
-- [ ] BUG: If device already exists, make sure to remove the "pending" records
-- [ ] BUG: If the app works in the background, after a long period of time the user is signed out. We should redirect to the sign-in screen
+- [ ] Improvement: Make cloud functions more typed
+- [x] BUG: If device already exists, make sure to remove the "pending" records
+screen

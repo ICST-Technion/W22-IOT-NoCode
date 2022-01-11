@@ -4,6 +4,8 @@ import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/google_sign_in_button.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({Key key}) : super(key: key);
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
@@ -43,7 +45,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 future: Authentication.initializeFirebase(context: context),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error initializing Firebase');
+                    return const Text('Error initializing Firebase');
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     return GoogleSignInButton();
                   }
