@@ -22,10 +22,10 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreen extends State<ScanScreen> {
 
-  User _user = FirebaseAuth.instance.currentUser;
+  final User _user = FirebaseAuth.instance.currentUser;
 
   final BarcodeDetector _detector = FirebaseVision.instance.barcodeDetector(
-      BarcodeDetectorOptions(
+      const BarcodeDetectorOptions(
           barcodeFormats: BarcodeFormat.qrCode
       )
   );
@@ -78,11 +78,11 @@ class _ScanScreen extends State<ScanScreen> {
         title: AppBarTitle(title: widget.title),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text('Scan device QR code')
               ),
@@ -93,7 +93,7 @@ class _ScanScreen extends State<ScanScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: _detectionStateWidget(),
               )
             ],
@@ -161,11 +161,11 @@ class _ScanScreen extends State<ScanScreen> {
   Widget _detectionStateWidget() {
     switch (_currentState) {
       case DetectionState.detected:
-        return Icon(Icons.check_circle,
+        return const Icon(Icons.check_circle,
             color: Colors.green,
             size: 48.0);
       case DetectionState.invalid:
-        return Icon(Icons.cancel,
+        return const Icon(Icons.cancel,
             color: Colors.red,
             size: 48.0);
       case DetectionState.empty:

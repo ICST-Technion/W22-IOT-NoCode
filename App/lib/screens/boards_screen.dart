@@ -23,13 +23,12 @@ class _BoardsScreenState extends State<BoardsScreen> {
   @override
   void initState() {
     super.initState();
-    print(_user);
   }
 
   Future<void> _onMenuChanged(int index) async {
     if(index == 2) {
       await Authentication.signOut(context: context);
-      final snackBar = SnackBar(content: Text('Signed out'));
+      const snackBar = SnackBar(content: Text('Signed out'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Navigator.pushReplacementNamed(context, "/");
     }

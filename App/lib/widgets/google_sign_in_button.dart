@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:app/screens/boards_screen.dart';
 import 'package:app/utils/authentication.dart';
 
 class GoogleSignInButton extends StatefulWidget {
@@ -11,6 +10,7 @@ class GoogleSignInButton extends StatefulWidget {
 }
 
 class _GoogleSignInButtonState extends State<GoogleSignInButton> {
+
   bool _isSigningIn = false;
 
   @override
@@ -56,7 +56,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 height: 35.0,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10),
                 child: Text(
                   'Sign in with Google',
                   style: TextStyle(

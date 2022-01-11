@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BottomNavbar extends StatelessWidget {
-  BottomNavbar({Key key, this.onChanged});
+  const BottomNavbar({Key key, this.onChanged}) : super(key: key);
 
   final Function(int) onChanged;
 
@@ -9,7 +9,7 @@ class BottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Boards',
           ),
@@ -20,7 +20,7 @@ class BottomNavbar extends StatelessWidget {
             ),
             label: '',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon (Icons.logout),
             label: 'Sign out'
           )

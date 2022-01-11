@@ -47,7 +47,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   if (snapshot.hasError) {
                     return const Text('Error initializing Firebase');
                   } else if (snapshot.connectionState == ConnectionState.done) {
-                    return GoogleSignInButton();
+                    return const GoogleSignInButton();
                   }
                   return CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
