@@ -39,7 +39,7 @@ exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsu
   });
 
 // on pending -> check device
-exports.pendingUpdate = functions.region(functions.config().iot.core.region).firestore.document("pending/{device}").onWrite(async(change, context) => {
+exports.pendingUpdate = functions.region(functions.config().iot.core.region).firestore.document("pending/{device}").onWrite(async(change: functions.Change<admin.firestore.DocumentSnapshot>, context: functions.EventContext) => {
 
   const deviceId = context.params.device;
 
@@ -48,6 +48,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
     console.log(`Pending device removed for ${deviceId}`);
     return;
   }
+
   console.log(`Pending device created for ${deviceId}`);
   const pending = change.after.data();
 
@@ -56,7 +57,9 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
     const deviceRef = admin.firestore().doc(`boards/${deviceId}`);
     const deviceDoc = await deviceRef.get();
 
-    if (deviceDoc.exists) throw new Error(`${deviceId} is already registered to another user`);
+    if (deviceDoc.exists) {
+      throw new Error(`${deviceId} is already registered to another user`);
+    }
 
     // Verify device exists in IoT Core
     const result = await getDevice(deviceId);
@@ -90,6 +93,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
   } catch (error) {
     // Device does not exist in IoT Core or key doesn't match
     console.error('Unable to register new device', error);
+    change.after.ref.delete();
   }
 
 });

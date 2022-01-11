@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1045670335666",
+    "project_id": "iot-project-b52bb",
+    "storage_bucket": "iot-project-b52bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045670335666:android:3718cfa3b8e838b072a5ab",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045670335666-kl7m8uto142ncoen5rcurkujn929s5bg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG3TebZ7ABztrwuOwZJWbygAaJtHwNTfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045670335666-kl7m8uto142ncoen5rcurkujn929s5bg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1045670335666-83j3bvc5l2o5c8sfgv0lvf91c7e4ffe5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.iot.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
