@@ -88,3 +88,26 @@ Use `./functions_deploy` script to deploy the functions
 - [ ] Improvement: Make cloud functions more typed
 - [x] BUG: If device already exists, make sure to remove the "pending" records
 screen
+
+
+## Troubleshoot
+- Google sign-in succeed but the login proccess to the app gets stuck and the exection:
+[ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: PlatformException(sign_in_failed, com.google.android.gms.common.api.ApiException: 10: , null, null)
+appears in the "run" terminal of android studio.
+
+solution:
+You need to create a fingerprint in the firebase console. Go to "Project Setting" and click on "Add fingerprint". Create a SHA1 key by using a tool named "Keytool" which is built-in in windows and linux.
+
+In Windows:
+Open the CMD, if keytool is not included in your PATH, go to your JAVA folder in either program files or program files (x86). Search for Keytool and change your CMD current directory to this folder. run the following command:
+keytool -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
+In Linux/UNIX:
+run the following command:
+keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore
+
+enter the password: android
+copy the SHA1 key and paste it firebase fingerprint.
+
+- google services.json is missing
+solution: You need to download this file from the firebase console. Go to "Project Setting" and click on the button google services.json.
+Save this file under the path: ***your project path***\App\android\app
