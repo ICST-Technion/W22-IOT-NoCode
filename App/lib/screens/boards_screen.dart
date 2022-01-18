@@ -89,6 +89,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
                             }).toList();
                           },
                           onSelected: (String value) {
+                            FirebaseFirestore.instance.collection('board-configs').doc(data.id).delete();
                             data.reference.delete();
                             const snackBar = SnackBar(content: Text('Board deleted'));
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
