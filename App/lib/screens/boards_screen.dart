@@ -79,27 +79,23 @@ class _BoardsScreenState extends State<BoardsScreen> {
                       ListTile(
                         leading: const Icon(Icons.memory, size: 40),
                         title: Text(data.id, style: const TextStyle(fontSize: 24)),
-                        onTap: () => _selectDevice(context, data),
-                      ),
-                      DropdownButton<String>(
-                        //value: dropdownValue,
-                        icon: const Icon(Icons.arrow_downward),
-                        elevation: 16,
-                        style: const TextStyle(color: Colors.red),
-                        underline: Container(
-                          height: 0,
+                        trailing: PopupMenuButton<String>(
+                          itemBuilder: (BuildContext context) {
+                            return {'Remove'}.map((String choice) {
+                              return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice)
+                              );
+                            }).toList();
+                          },
+                          onSelected: (String value) {
+                            data.reference.delete();
+                            const snackBar = SnackBar(content: Text('Board deleted'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          },
                         ),
-                        onChanged: (String newValue) async {
-                          await data.reference.delete();
-                        },
-                          items: ["Remove"]
-                              .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                      ),
+                        onTap: () => _selectDevice(context, data),
+                      )
                     ],
                   )
                 );
@@ -133,7 +129,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
     var pendingRef = FirebaseFirestore.instance.collection('pending').doc(deviceId);
     pendingRef.set(device);
 
-    const snackBar = SnackBar(content: Text('Registering device'));
+    const snackBar = SnackBar(content: Text('Registering board'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
