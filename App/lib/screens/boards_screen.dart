@@ -80,7 +80,26 @@ class _BoardsScreenState extends State<BoardsScreen> {
                         leading: const Icon(Icons.memory, size: 40),
                         title: Text(data.id, style: const TextStyle(fontSize: 24)),
                         onTap: () => _selectDevice(context, data),
-                      )
+                      ),
+                      DropdownButton<String>(
+                        //value: dropdownValue,
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.red),
+                        underline: Container(
+                          height: 0,
+                        ),
+                        onChanged: (String newValue) async {
+                          await data.reference.delete();
+                        },
+                          items: ["Remove"]
+                              .map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                      ),
                     ],
                   )
                 );
