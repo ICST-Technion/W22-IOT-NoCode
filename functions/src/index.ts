@@ -84,7 +84,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
     const configRef = admin.firestore().doc(`board-configs/${deviceId}`);
     const config = {
       owner: pending!.owner,
-      value: []
+      config: []
     };
     batch.set(configRef, config);
 

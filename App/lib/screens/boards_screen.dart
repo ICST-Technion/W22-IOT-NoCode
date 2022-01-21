@@ -1,3 +1,4 @@
+import 'package:app/screens/board_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,9 @@ class _BoardsScreenState extends State<BoardsScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           },
                         ),
-                        onTap: () => _selectDevice(context, data),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/board', arguments: BoardArguments(data.reference));
+                        }
                       )
                     ],
                   )
@@ -104,17 +107,6 @@ class _BoardsScreenState extends State<BoardsScreen> {
         }
       },
     );
-  }
-
-  /// Show user panel to send a device command
-  void _selectDevice(BuildContext context, DocumentSnapshot data) {
-    print("device selected");
-    // showModalBottomSheet(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return DeviceConfigPanel(device: device);
-    //   },
-    // );
   }
 
   /// Scan a device, then publish the result

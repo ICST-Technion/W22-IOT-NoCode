@@ -1,3 +1,4 @@
+import 'package:app/screens/board_screen.dart';
 import 'package:app/screens/boards_screen.dart';
 import 'package:app/screens/scan_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SignInScreen(),
         '/boards': (context) => const BoardsScreen(title: "Boards"),
+        '/board': (context) => const BoardScreen(title: "Board"),
         '/scan': (context) => const ScanScreen(title: "Scan"),
       },
     );
