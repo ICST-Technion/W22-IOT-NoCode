@@ -25,7 +25,6 @@ class _BoardScreenState extends State<BoardScreen> {
 
   final User _user = FirebaseAuth.instance.currentUser;
 
-
   @override
   void initState() {
     super.initState();
@@ -53,21 +52,23 @@ class _BoardScreenState extends State<BoardScreen> {
             child: const Icon(Icons.emoji_objects),
             backgroundColor: CustomColors.ledColor,
             foregroundColor: Colors.white,
-            label: 'LED RGB'
+            label: 'LED RGB',
+            onTap: () {add_device_dialog("led", boardDocument.id);}
           ),
           SpeedDialChild(
               child: const Icon(Icons.sensors),
               backgroundColor: CustomColors.sensorColor,
               foregroundColor: Colors.white,
-              label: 'Sensor'
+              label: 'Sensor',
+              onTap: () {add_device_dialog("sensor", boardDocument.id);}
           ),
           SpeedDialChild(
               child: const Icon(Icons.iso),
               backgroundColor: CustomColors.servoColor,
               foregroundColor: Colors.white,
-              label: 'Servo engine'
+              label: 'Servo engine',
+              onTap: () {add_device_dialog("servo", boardDocument.id);}
           )
-
         ],
       ),
         body: _queryDeviceList(boardDocument)
@@ -130,7 +131,9 @@ class _BoardScreenState extends State<BoardScreen> {
                       IconButton(
                         icon: Icon(icon),
                         iconSize: 40,
-                        onPressed: () {},
+                        onPressed: () {
+
+                        },
                       ),
                       Text(device["name"])
                     ]
@@ -141,5 +144,24 @@ class _BoardScreenState extends State<BoardScreen> {
       },
     );
   }
+
+  void add_device_dialog(String device_type, String board_id) => showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Device name"),
+        content: TextField(
+          onSubmitted: (String value) {
+            FirebaseFirestore.instance.collection("boards").doc(board_id).update({
+              "devices": FieldValue.arrayUnion([{
+                "name": value,
+                "type": device_type,
+                "pins": []
+              }])
+            });
+            Navigator.pop(context);
+          },
+          decoration: const InputDecoration(hintText: "Enter device's name"),
+        ),
+      );
+    });
 
 }
