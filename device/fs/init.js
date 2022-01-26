@@ -33,47 +33,68 @@ print("Started with DeviceID: " + device_id);
 print("Listening for configuration on: " + config_topic + " topic");
 
 
+//handles the configuration received from the cloud and reports state back to the cloud
 MQTT.sub(config_topic, function(conn, topic, msg) {
 	
 	print("Received a new configuration");
-
+	
+	//parsing the message and checking whether it's valid 
 	let obj = JSON.parse(msg) || {};
-	
 	print("Configuraiton: ", obj);
-	
-	if(!obj.pins) {
-		print('"pins" property is missing from configuration JSON');
+	if(!obj.devices) {
+		print('"devices" property is missing from configuration JSON');
 		return;
 	}
+	for(let j=0; j<obj.devices.length; ++j){
+		if(!obj.devices[j].name) {
+			print('"name" property is missing from configuration JSON');
+			return;
+		}	
+		if(!obj.devices[j].type) {
+			print('"type" property is missing from configuration JSON');
+			return;
+		}
+		if(!obj.devices[j].pins) {
+			print('"pins" property is missing from configuration JSON');
+			return;
+		}
+		print("Succeed");
+	}
 	
-	let state = {
-		pins: []
-	};
-
 	// create a copy of pins into all_pins
 	let all_pins = [];
 	for(let i=0; i<pins.length; ++i) {
 		all_pins[i] = pins[i];
 	}
 	
-	// set pins
-	for(let i=0; i<obj.pins.length; ++i) {
-		
-		// pin object
-		let pin = obj.pins[i];
-		
-		print("pin", pin.number, "is", pin.value);
+	//builds the state to report and update the new cofig we received
+	let state = {
+		devices: []
+	};
+	
+	for(let j=0; j<obj.devices.length; ++j){
+		state.devices[j] = {
+			name: obj.devices[j].name,
+			type: obj.devices[j].type,
+			pins: []
+		};
+		for(let i=0; i<obj.devices[j].pins.length; ++i) {
+			
+			// pin object
+			let pin = obj.devices[j].pins[i];
+			
+			print("pin", pin.number, "is", pin.value);
 
-		all_pins[pin.number] = 0; // it means we checked it
+			all_pins[pin.number] = 0; // it means we checked it
 
-		GPIO.write(pin.number, pin.value);
-		
-		state.pins.push({
-			number: pin.number,
-			value: pin.value
-		});
+			GPIO.write(pin.number, pin.value);
+			
+			state.devices[j].pins.push({
+				number: pin.number,
+				value: pin.value
+			});
+		}
 	}
-
 	// set all not checked pins to 0
 	for(let i=0; i<all_pins.length; ++i) {
 		if(all_pins[i]) {
