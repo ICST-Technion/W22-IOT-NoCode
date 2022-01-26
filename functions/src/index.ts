@@ -37,7 +37,7 @@ exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsu
 
     const boardId = message.attributes.deviceId;
     await admin.firestore().collection('boards').doc(boardId).update({
-      "state": message.json
+      "devices": message.json
     })
   });
 

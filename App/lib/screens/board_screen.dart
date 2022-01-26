@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class BoardArguments {
   final DocumentReference<Object> board_ref;
@@ -23,15 +24,11 @@ class BoardScreen extends StatefulWidget {
 class _BoardScreenState extends State<BoardScreen> {
 
   final User _user = FirebaseAuth.instance.currentUser;
-  var _state = false;
+
 
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      _state = false;
-    });
   }
 
   @override
@@ -46,39 +43,103 @@ class _BoardScreenState extends State<BoardScreen> {
         backgroundColor: CustomColors.navy,
         title: AppBarTitle(title: boardDocument.id),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
+
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        tooltip: 'Add a device',
         children: [
-        IconButton(
-          iconSize: 60,
-          icon: _state ? const Icon(Icons.emoji_objects) : const Icon(Icons.emoji_objects_outlined),
-          tooltip: 'Light bulb',
-          onPressed: () {
+          SpeedDialChild(
+            child: const Icon(Icons.emoji_objects),
+            backgroundColor: CustomColors.ledColor,
+            foregroundColor: Colors.white,
+            label: 'LED RGB'
+          ),
+          SpeedDialChild(
+              child: const Icon(Icons.sensors),
+              backgroundColor: CustomColors.sensorColor,
+              foregroundColor: Colors.white,
+              label: 'Sensor'
+          ),
+          SpeedDialChild(
+              child: const Icon(Icons.iso),
+              backgroundColor: CustomColors.servoColor,
+              foregroundColor: Colors.white,
+              label: 'Servo engine'
+          )
 
-            setState(() {
-              _state = !_state;
-            });
-
-            var doc = FirebaseFirestore.instance.collection('board-configs').doc(boardDocument.id);
-            doc.update({
-              "config": {
-                "pins": [
-                  {
-                    "number": 22,
-                    "value": _state ? 1 : 0
-                  }
-                ]
-            }
-            });
-
-          },
-        ),
-          Text("Light bulb")
-      ]
-      )
+        ],
+      ),
+        body: _queryDeviceList(boardDocument)
     );
   }
+
+  Widget _queryDeviceList(DocumentReference board_ref) {
+
+    if (_user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('boards').doc(board_ref.id).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(child: CircularProgressIndicator());
+          default:
+            Map<String, dynamic> data = snapshot.data.data() as Map<String, dynamic>;
+            return GridView.count(
+                primary: false,
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                padding: const EdgeInsets.all(30),
+                children: (data["devices"] as List<dynamic>).map((device){
+
+                IconData icon;
+                Color color;
+
+                if(device["type"] == "led") {
+                  icon = Icons.emoji_objects_outlined;
+                  color = CustomColors.ledColor;
+                }
+                else if(device["type"] == "sensor") {
+                  icon = Icons.sensors;
+                  color = CustomColors.sensorColor;
+                }
+                else if(device["type"] == "servo") {
+                  icon = Icons.iso;
+                  color = CustomColors.servoColor;
+                }
+                else {
+                  print("Not a legal device type");
+                }
+                return Container(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(15),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      IconButton(
+                        icon: Icon(icon),
+                        iconSize: 40,
+                        onPressed: () {},
+                      ),
+                      Text(device["name"])
+                    ]
+                  )
+                );
+                }).toList());
+        }
+      },
+    );
+  }
+
 }

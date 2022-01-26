@@ -45,16 +45,17 @@ class _BoardsScreenState extends State<BoardsScreen> {
         title: AppBarTitle(title: widget.title),
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Add a board',
         child: const Icon(Icons.add),
         onPressed: () => _registerDevice(context),
       ),
       bottomNavigationBar: BottomNavbar(onChanged: _onMenuChanged),
-      body: _queryDeviceList()
+      body: _queryBoardList()
     );
   }
 
   /// List devices owned by the authenticated user
-  Widget _queryDeviceList() {
+  Widget _queryBoardList() {
 
     if (_user == null) {
       return const Center(child: CircularProgressIndicator());
