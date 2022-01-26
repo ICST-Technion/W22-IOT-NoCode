@@ -20,7 +20,9 @@ exports.configUpdate = functions.region(functions.config().iot.core.region).fire
           console.log(`Sending a config update to board ${boardId}`);
 
           const data = change.after.data()
-          const config = data!.config
+          const config = {
+            "devices": data!.devices
+          };
 
           const formattedName = client.devicePath(process.env.GCLOUD_PROJECT!, functions.config().iot.core.region, functions.config().iot.core.registry, boardId);
           const dataValue = Buffer.from(JSON.stringify(config)).toString("base64");
@@ -37,7 +39,7 @@ exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsu
 
     const boardId = message.attributes.deviceId;
     await admin.firestore().collection('boards').doc(boardId).update({
-      "devices": message.json
+      "devices": message.json.devices
     })
   });
 
@@ -76,6 +78,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
     const device = {
       id: pending!.serial_number,
       owner: pending!.owner,
+      devices: []
     };
 
     batch.set(deviceRef, device);
@@ -83,8 +86,9 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
         // Generate a default configuration
     const configRef = admin.firestore().doc(`board-configs/${deviceId}`);
     const config = {
+      id: pending!.serial_number,
       owner: pending!.owner,
-      config: []
+      devices: []
     };
     batch.set(configRef, config);
 

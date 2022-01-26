@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:app/widgets/bottom_navigation_bar.dart';
 
 class BoardArguments {
   final DocumentReference<Object> board_ref;
@@ -30,6 +31,7 @@ class _BoardScreenState extends State<BoardScreen> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -42,7 +44,7 @@ class _BoardScreenState extends State<BoardScreen> {
         backgroundColor: CustomColors.navy,
         title: AppBarTitle(title: boardDocument.id),
       ),
-
+        bottomNavigationBar: BottomNavbar(),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
@@ -150,13 +152,17 @@ class _BoardScreenState extends State<BoardScreen> {
         title: const Text("Device name"),
         content: TextField(
           onSubmitted: (String value) {
-            FirebaseFirestore.instance.collection("boards").doc(board_id).update({
+            FirebaseFirestore.instance.collection("board-configs").doc(board_id).update({
               "devices": FieldValue.arrayUnion([{
                 "name": value,
                 "type": device_type,
                 "pins": []
               }])
             });
+
+            const snackBar = SnackBar(content: Text('Device added'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
             Navigator.pop(context);
           },
           decoration: const InputDecoration(hintText: "Enter device's name"),

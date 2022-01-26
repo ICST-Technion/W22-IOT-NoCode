@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
-import 'package:app/utils/authentication.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 
@@ -26,15 +25,6 @@ class _BoardsScreenState extends State<BoardsScreen> {
     super.initState();
   }
 
-  Future<void> _onMenuChanged(int index) async {
-    if(index == 2) {
-      await Authentication.signOut(context: context);
-      const snackBar = SnackBar(content: Text('Signed out'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pushReplacementNamed(context, "/");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +39,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
         child: const Icon(Icons.add),
         onPressed: () => _registerDevice(context),
       ),
-      bottomNavigationBar: BottomNavbar(onChanged: _onMenuChanged),
+      bottomNavigationBar: BottomNavbar(),
       body: _queryBoardList()
     );
   }
@@ -118,6 +108,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
     // Attach the current user as the device owner
     final Map<String, dynamic> device = result;
     device['owner'] = _user.uid;
+    device['devices'] = [];
 
     final String deviceId = device['serial_number'];
     var pendingRef = FirebaseFirestore.instance.collection('pending').doc(deviceId);
