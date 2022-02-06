@@ -5,7 +5,9 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
-import 'package:app/widgets/device_settings_dialog.dart';
+import 'package:app/widgets/device_settings/led_settings_dialog.dart';
+import 'package:app/widgets/device_page/led_page_dialog.dart';
+
 
 class BoardArguments {
   final DocumentReference<Object> board_ref;
@@ -105,12 +107,22 @@ class _BoardScreenState extends State<BoardScreen> {
 
                 IconData icon;
                 Color color;
-
-                var settings_dialog = DeviceSettingsDialog(board_ref: snapshot.data.reference, device: device);
+                var settings_dialog = null;
+                var page_dialog = null;
 
                 if(device["type"] == "led") {
                   icon = Icons.emoji_objects_outlined;
                   color = CustomColors.ledColor;
+                  settings_dialog = LedSettingsDialog(
+                    board: data,
+                    device: device,
+                    title: "Led configuration",
+                  );
+                  page_dialog = LedPageDialog(
+                    board: data,
+                    device: device,
+                    title: device["name"]+" LED",
+                  );
                 }
                 else if(device["type"] == "sensor") {
                   icon = Icons.sensors;
@@ -138,8 +150,15 @@ class _BoardScreenState extends State<BoardScreen> {
                           child: Icon(icon, size: 50),
                           padding: const EdgeInsets.all(10.0),
                         ),
+                        onTap: () {
+                          showDialog(context: context, builder: (BuildContext context) {
+                            return page_dialog;
+                          });
+                        },
                         onLongPress: () {
-                          show_device_settings_dialog(settings_dialog);
+                          showDialog(context: context, builder: (BuildContext context) {
+                            return settings_dialog;
+                          });
                         },
                       ),
                       Text(device["name"])
@@ -173,9 +192,5 @@ class _BoardScreenState extends State<BoardScreen> {
           decoration: const InputDecoration(hintText: "Enter device's name"),
         ),
       );
-    });
-
-    void show_device_settings_dialog(DeviceSettingsDialog dialog) => showDialog(context: context, builder: (BuildContext context) {
-      return dialog;
     });
 }
