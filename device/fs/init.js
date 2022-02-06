@@ -45,7 +45,7 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 		print('"devices" property is missing from configuration JSON');
 		return;
 	}
-	for(let j=0; j<obj.devices.length; ++j){
+	for(let j=0; j < obj.devices.length; ++j){
 		if(!obj.devices[j].name) {
 			print('"name" property is missing from configuration JSON');
 			return;
@@ -58,8 +58,14 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 			print('"pins" property is missing from configuration JSON');
 			return;
 		}
-		print("Succeed");
+		for(let k=0; k < obj.devices[j].pins.length; ++k){
+			if(!obj.devices[j].pins[k].name) {
+				print('"pin.name" property is missing from configuration JSON');
+				return;
+			}
+		}
 	}
+	print("Succeed");
 	
 	// create a copy of pins into all_pins
 	let all_pins = [];
@@ -90,6 +96,7 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 			GPIO.write(pin.number, pin.value);
 			
 			state.devices[j].pins.push({
+				name: pin.name,
 				number: pin.number,
 				value: pin.value
 			});
