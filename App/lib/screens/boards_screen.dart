@@ -39,7 +39,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
         child: const Icon(Icons.add),
         onPressed: () => _registerDevice(context),
       ),
-      bottomNavigationBar: BottomNavbar(),
+      bottomNavigationBar: const BottomNavbar(),
       body: _queryBoardList()
     );
   }

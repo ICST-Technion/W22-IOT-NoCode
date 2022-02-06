@@ -5,6 +5,7 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
+import 'package:app/widgets/device_settings_dialog.dart';
 
 class BoardArguments {
   final DocumentReference<Object> board_ref;
@@ -44,7 +45,7 @@ class _BoardScreenState extends State<BoardScreen> {
         backgroundColor: CustomColors.navy,
         title: AppBarTitle(title: boardDocument.id),
       ),
-        bottomNavigationBar: BottomNavbar(),
+        bottomNavigationBar: const BottomNavbar(),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
@@ -105,6 +106,8 @@ class _BoardScreenState extends State<BoardScreen> {
                 IconData icon;
                 Color color;
 
+                var settings_dialog = DeviceSettingsDialog(board_ref: snapshot.data.reference, device: device);
+
                 if(device["type"] == "led") {
                   icon = Icons.emoji_objects_outlined;
                   color = CustomColors.ledColor;
@@ -130,15 +133,17 @@ class _BoardScreenState extends State<BoardScreen> {
                   padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
-                      IconButton(
-                        icon: Icon(icon),
-                        iconSize: 40,
-                        onPressed: () {
-
+                      InkWell(
+                        child: Ink(
+                          child: Icon(icon, size: 50),
+                          padding: const EdgeInsets.all(10.0),
+                        ),
+                        onLongPress: () {
+                          show_device_settings_dialog(settings_dialog);
                         },
                       ),
                       Text(device["name"])
-                    ]
+                    ],
                   )
                 );
                 }).toList());
@@ -160,7 +165,7 @@ class _BoardScreenState extends State<BoardScreen> {
               }])
             });
 
-            const snackBar = SnackBar(content: Text('Device added'));
+            const snackBar = SnackBar(content: Text('Adding device'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
             Navigator.pop(context);
@@ -170,4 +175,7 @@ class _BoardScreenState extends State<BoardScreen> {
       );
     });
 
+    void show_device_settings_dialog(DeviceSettingsDialog dialog) => showDialog(context: context, builder: (BuildContext context) {
+      return dialog;
+    });
 }
