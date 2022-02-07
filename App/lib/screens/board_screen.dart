@@ -6,7 +6,8 @@ import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 import 'package:app/widgets/device_settings/led_settings_dialog.dart';
-import 'package:app/widgets/device_page/led_page_dialog.dart';
+import 'package:app/widgets/device_settings/servo_settings_dialog.dart';
+import 'package:app/widgets/device_control/led_control_dialog.dart';
 
 
 class BoardArguments {
@@ -108,7 +109,7 @@ class _BoardScreenState extends State<BoardScreen> {
                 IconData icon;
                 Color color;
                 var settings_dialog = null;
-                var page_dialog = null;
+                var control_dialog = null;
 
                 if(device["type"] == "led") {
                   icon = Icons.emoji_objects_outlined;
@@ -118,7 +119,7 @@ class _BoardScreenState extends State<BoardScreen> {
                     device: device,
                     title: "Led configuration",
                   );
-                  page_dialog = LedPageDialog(
+                  control_dialog = LedControlDialog(
                     board: data,
                     device: device,
                     title: device["name"]+" LED",
@@ -131,6 +132,11 @@ class _BoardScreenState extends State<BoardScreen> {
                 else if(device["type"] == "servo") {
                   icon = Icons.iso;
                   color = CustomColors.servoColor;
+                  settings_dialog = ServoSettingsDialog(
+                    board: data,
+                    device: device,
+                    title: "Servo configuration",
+                  );
                 }
                 else {
                   print("Not a legal device type");
@@ -142,28 +148,28 @@ class _BoardScreenState extends State<BoardScreen> {
                       Radius.circular(15),
                     ),
                   ),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        child: Ink(
-                          child: Icon(icon, size: 50),
-                          padding: const EdgeInsets.all(10.0),
-                        ),
-                        onTap: () {
-                          showDialog(context: context, builder: (BuildContext context) {
-                            return page_dialog;
-                          });
-                        },
-                        onLongPress: () {
-                          showDialog(context: context, builder: (BuildContext context) {
-                            return settings_dialog;
-                          });
-                        },
+                  child: InkWell(
+                    child: Ink(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                       children: [
+                         Icon(icon, size: 50),
+                         Text(device["name"])
+                       ],
                       ),
-                      Text(device["name"])
-                    ],
-                  )
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    onTap: () {
+                      showDialog(context: context, builder: (BuildContext context) {
+                        return control_dialog;
+                      });
+                    },
+                    onLongPress: () {
+                      showDialog(context: context, builder: (BuildContext context) {
+                        return settings_dialog;
+                      });
+                    },
+                  ),
                 );
                 }).toList());
         }

@@ -3,18 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 
-class LedPageDialog extends StatefulWidget {
-  const LedPageDialog({Key key, this.board, this.device, this.title}) : super(key: key);
+class LedControlDialog extends StatefulWidget {
+  const LedControlDialog({Key key, this.board, this.device, this.title}) : super(key: key);
 
   final Map<String, dynamic> board;
   final dynamic device;
   final String title;
 
   @override
-  _LedPageDialogState createState() => _LedPageDialogState();
+  _LedControlDialogState createState() => _LedControlDialogState();
 }
 
-class _LedPageDialogState extends State<LedPageDialog> {
+class _LedControlDialogState extends State<LedControlDialog> {
 
   Map<String, Map> _pins = {};
 

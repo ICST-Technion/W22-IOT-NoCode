@@ -7,25 +7,18 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Boards',
           ),
           BottomNavigationBarItem(
-            icon: Image.asset(
-              'assets/logo.png',
-              height: 40,
-            ),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
             icon: Icon (Icons.logout),
             label: 'Sign out'
           )
         ],
       onTap: (index) async {
-        if(index == 2) {
+        if(index == 1) {
           await Authentication.signOut(context: context);
           const snackBar = SnackBar(content: Text('Signed out'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
