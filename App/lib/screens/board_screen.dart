@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 import 'package:app/widgets/settings_dialog.dart';
 import 'package:app/widgets/device_control/led_control_dialog.dart';
+import 'package:app/widgets/device_control/servo_control_dialog.dart';
 import 'package:app/res/custom_icons.dart';
 
 
@@ -160,6 +161,11 @@ class _BoardScreenState extends State<BoardScreen> {
                         "color": Colors.white70,
                       }
                     ],
+                  );
+                  control_dialog = ServoControlDialog(
+                    board: data,
+                    device: device,
+                    title: device["name"]+" servo",
                   );
                 }
                 else {

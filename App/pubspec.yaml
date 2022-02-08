@@ -42,6 +42,7 @@ dependencies:
   flutter_speed_dial: ^5.0.0+1
   numberpicker: ^2.1.1
   flutter_switch: ^0.3.2
+  knob_widget: ^1.0.0
 
 dev_dependencies:
   flutter_test:
