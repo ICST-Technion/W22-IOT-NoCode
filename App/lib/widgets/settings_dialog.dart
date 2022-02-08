@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:app/res/custom_icons.dart';
+
 
 class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({Key key, this.board, this.device, this.title, this.getPins}) : super(key: key);
+  const SettingsDialog({Key key, this.board, this.device, this.title, this.pinsStructure}) : super(key: key);
 
   final Map<String, dynamic> board;
   final dynamic device;
   final String title;
-  final List<Map<String, dynamic>> Function() getPins;
+  final List<Map<String, dynamic>> pinsStructure;
 
   @override
   _SettingsDialogState createState() => _SettingsDialogState();
@@ -20,7 +22,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
 
   Map<String, Map<String, dynamic>> _pinsListToMap(List<Map<String, dynamic>> pinsList) {
 
-    Map<String, Map<String, dynamic>> pinsMap;
+    Map<String, Map<String, dynamic>> pinsMap = {};
 
     for(var i=0; i<pinsList.length; ++i) {
       var pin = pinsList[i];
@@ -35,11 +37,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
     return pinsMap.values.map((e) => {
       "name": e["name"],
       "number": e["number"],
-      "value": 0,
-    })
+      "value": 0
+    }).toList();
   }
 
-  Map<String, Map<String, dynamic>> _fillDbValues(Map<String, Map<String, dynamic>> pinsMap, List<Map<String, dynamic>> dbPins) {
+  Map<String, Map<String, dynamic>> _fillDbValues(Map<String, Map<String, dynamic>> pinsMap, List<dynamic> dbPins) {
 
     for (var i = 0; i < dbPins.length; ++i) {
       var pin = dbPins[i];
@@ -54,14 +56,15 @@ class _SettingsDialogState extends State<SettingsDialog> {
     super.initState();
 
     setState(() {
-      _pinsMap = _pinsListToMap(widget.getPins());
+      _pinsMap = _pinsListToMap(widget.pinsStructure);
       _pinsMap = _fillDbValues(_pinsMap, widget.device["pins"]);
+      print(_pinsMap);
     });
   }
 
   List<Widget> _buildPinRows(Map<String, Map<String, dynamic>> pinsMap) {
 
-    List<Map<String, dynamic>> pinsList = _pinsMap.values;
+    List<Map<String, dynamic>> pinsList = _pinsMap.values.toList();
     List<Widget> widgets = [];
 
     for(var i=0; i<pinsList.length; ++i) {
@@ -94,7 +97,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             )
         ]),
         const SizedBox(height: 15),
-      ]
+      ];
     }
 
     return widgets;
@@ -137,7 +140,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             }
         ),
         IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(CustomIcons.remove),
             tooltip: "Remove device",
             onPressed: () {
               FirebaseFirestore.instance.collection("boards").doc(widget.board["id"]).update({

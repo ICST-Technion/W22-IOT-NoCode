@@ -5,9 +5,9 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
-import 'package:app/widgets/device_settings/led_settings_dialog.dart';
-import 'package:app/widgets/device_settings/servo_settings_dialog.dart';
+import 'package:app/widgets/settings_dialog.dart';
 import 'package:app/widgets/device_control/led_control_dialog.dart';
+import 'package:app/res/custom_icons.dart';
 
 
 class BoardArguments {
@@ -55,21 +55,21 @@ class _BoardScreenState extends State<BoardScreen> {
         tooltip: 'Add a device',
         children: [
           SpeedDialChild(
-            child: const Icon(Icons.emoji_objects),
+            child: const Icon(CustomIcons.led),
             backgroundColor: CustomColors.ledColor,
             foregroundColor: Colors.white,
             label: 'LED RGB',
             onTap: () {add_device_dialog("led", boardDocument.id);}
           ),
           SpeedDialChild(
-              child: const Icon(Icons.sensors),
+              child: const Icon(CustomIcons.sensor),
               backgroundColor: CustomColors.sensorColor,
               foregroundColor: Colors.white,
               label: 'Sensor',
               onTap: () {add_device_dialog("sensor", boardDocument.id);}
           ),
           SpeedDialChild(
-              child: const Icon(Icons.iso),
+              child: const Icon(CustomIcons.servo),
               backgroundColor: CustomColors.servoColor,
               foregroundColor: Colors.white,
               label: 'Servo engine',
@@ -112,12 +112,29 @@ class _BoardScreenState extends State<BoardScreen> {
                 var control_dialog = null;
 
                 if(device["type"] == "led") {
-                  icon = Icons.emoji_objects_outlined;
+                  icon = CustomIcons.led;
                   color = CustomColors.ledColor;
-                  settings_dialog = LedSettingsDialog(
+                  settings_dialog = SettingsDialog(
                     board: data,
                     device: device,
-                    title: "Led configuration",
+                    title: 'Led RGB settings',
+                    pinsStructure: [
+                      {
+                        "name": "red",
+                        "icon": icon,
+                        "color": Colors.redAccent,
+                      },
+                      {
+                        "name": "green",
+                        "icon": icon,
+                        "color": Colors.greenAccent,
+                      },
+                      {
+                        "name": "blue",
+                        "icon": icon,
+                        "color": Colors.blueAccent,
+                      },
+                    ],
                   );
                   control_dialog = LedControlDialog(
                     board: data,
@@ -126,16 +143,23 @@ class _BoardScreenState extends State<BoardScreen> {
                   );
                 }
                 else if(device["type"] == "sensor") {
-                  icon = Icons.sensors;
+                  icon = CustomIcons.sensor;
                   color = CustomColors.sensorColor;
                 }
                 else if(device["type"] == "servo") {
-                  icon = Icons.iso;
+                  icon = CustomIcons.servo;
                   color = CustomColors.servoColor;
-                  settings_dialog = ServoSettingsDialog(
+                  settings_dialog = SettingsDialog(
                     board: data,
                     device: device,
-                    title: "Servo configuration",
+                    title: 'Servo settings',
+                    pinsStructure: [
+                      {
+                        "name": "control",
+                        "icon": icon,
+                        "color": Colors.white70,
+                      }
+                    ],
                   );
                 }
                 else {
