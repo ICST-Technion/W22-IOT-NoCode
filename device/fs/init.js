@@ -1,6 +1,7 @@
 load('api_config.js');
 load('api_gpio.js');
 load('api_mqtt.js');
+load('api_pwm.js');
 
 // Device identifier given by Google Cloud IoT Core
 let device_id = Cfg.get('device.id');
@@ -11,21 +12,28 @@ let config_topic = '/devices/' + device_id + '/config';
 // Topic to publish state
 let state_topic = '/devices/' + device_id + '/state';
 
+//PWM settings
+let min_duty = 0.05;
+let max_duty = 0.1;
+let pwm_freq = 50;
 
 // list of all pins
 let pins = [0, // 0
 			0,0,0,0,0,0,0,0,0,0, // 1-10
-			0,0,0,0,0,0,0,0,0,0, // 11-20
+			0,0,0,0,0,0,0,2,0,0, // 11-20
 			1,1,1,0,0,0,0,0,0,0 // 21-30
 			];
 
 // set all available pins to MODE_OUTPUT and value to 0
 for(let i=0; i<pins.length; ++i) {
-	if(pins[i]) {
+	if(pins[i]===1) {
 		print("pin", i, "set to MODE_OUTPUT");
 		GPIO.set_mode(i, GPIO.MODE_OUTPUT);
 		print("pin", i, "is 0");
 		GPIO.write(i, 0);
+	}else if(pins[i]===2){
+		print("pin", i, "PWM");
+		PWM.set(i, pwm_freq, min_duty);
 	}
 }
 
@@ -92,8 +100,15 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 			print("pin", pin.number, "is", pin.value);
 
 			all_pins[pin.number] = 0; // it means we checked it
-
-			GPIO.write(pin.number, pin.value);
+			if(pins[pin.number] === 2){
+				let res = min_duty +(pin.value /180.0) * (max_duty - min_duty);
+				print("result: " ,res);
+				print("pin: " ,pin.number);
+				PWM.set(pin.number, pwm_freq, res);
+			}
+			else if(pins[pin.number] === 1){
+				GPIO.write(pin.number, pin.value);
+			}
 			
 			state.devices[j].pins.push({
 				name: pin.name,
@@ -105,8 +120,14 @@ MQTT.sub(config_topic, function(conn, topic, msg) {
 	// set all not checked pins to 0
 	for(let i=0; i<all_pins.length; ++i) {
 		if(all_pins[i]) {
-			print("pin", i, "is 0");
-			GPIO.write(i, 0);
+			if(pins[i] === 2){
+				PWM.set(i, pwm_freq, min_duty);
+				print("pin", i, "is PWM");
+			}
+			else if(pins[i] === 1){
+				GPIO.write(i, 0);
+				print("pin", i, "is 0");
+			}
 		}
 	}
 	
