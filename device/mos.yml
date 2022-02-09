@@ -16,6 +16,7 @@ filesystem:
 libs:
   - location: https://github.com/mongoose-os-libs/boards
   - location: https://github.com/mongoose-os-libs/js-demo-bundle
+  - location: https://github.com/mongoose-os-libs/pwm
 
 conds:
   - when: mos.platform == "esp32"
