@@ -62,19 +62,6 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
 
     setState(() {
       _knobValue = value;
-
-      List devices = widget.board["devices"];
-
-      for(var i=0; i<devices.length; ++i) {
-        if(devices[i]["name"] == widget.device["name"]) {
-          devices[i]["pins"] = get_pins();
-          break;
-        }
-      }
-
-      FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
-        "devices": devices
-      });
     });
   }
 
@@ -94,10 +81,29 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
           Column(
             children: [
               SizedBox(height: 30),
-              Center(child: build_knob())
+              Center(child: build_knob()),
             ])
         ]
-      )
+      ),
+      actions: [
+        TextButton(onPressed: () {
+          List devices = widget.board["devices"];
+
+          for(var i=0; i<devices.length; ++i) {
+            if(devices[i]["name"] == widget.device["name"]) {
+              devices[i]["pins"] = get_pins();
+              break;
+            }
+          }
+
+          FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
+            "devices": devices
+          });
+
+          Navigator.pop(context);
+
+        }, child: const Text("Save"))
+      ],
     );
   }
 
