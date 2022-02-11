@@ -5,9 +5,12 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
-import 'package:app/widgets/settings_dialog.dart';
 import 'package:app/widgets/device_control/led_control_dialog.dart';
+import 'package:app/widgets/device_settings/led_settings_dialog.dart';
 import 'package:app/widgets/device_control/servo_control_dialog.dart';
+import 'package:app/widgets/device_settings/servo_settings_dialog.dart';
+import 'package:app/widgets/device_control/sensor_control_dialog.dart';
+import 'package:app/widgets/device_settings/sensor_settings_dialog.dart';
 import 'package:app/res/custom_icons.dart';
 
 
@@ -115,28 +118,11 @@ class _BoardScreenState extends State<BoardScreen> {
                 if(device["type"] == "led") {
                   icon = CustomIcons.led;
                   color = CustomColors.ledColor;
-                  settings_dialog = SettingsDialog(
+                  settings_dialog = LedSettingsDialog(
                     board: data,
                     device: device,
                     title: 'Led RGB settings',
-                    pinsStructure: [
-                      {
-                        "name": "red",
-                        "icon": icon,
-                        "color": Colors.redAccent,
-                      },
-                      {
-                        "name": "green",
-                        "icon": icon,
-                        "color": Colors.greenAccent,
-                      },
-                      {
-                        "name": "blue",
-                        "icon": icon,
-                        "color": Colors.blueAccent,
-                      },
-                    ],
-                  );
+                    );
                   control_dialog = LedControlDialog(
                     board: data,
                     device: device,
@@ -146,26 +132,29 @@ class _BoardScreenState extends State<BoardScreen> {
                 else if(device["type"] == "sensor") {
                   icon = CustomIcons.sensor;
                   color = CustomColors.sensorColor;
+                  settings_dialog = SensorSettingsDialog(
+                    board: data,
+                    device: device,
+                    title: 'Sensor settings',
+                  );
+                  control_dialog = SensorControlDialog(
+                      board: data,
+                      device: device,
+                      title: device["name"]+" sensor"
+                  );
                 }
                 else if(device["type"] == "servo") {
                   icon = CustomIcons.servo;
                   color = CustomColors.servoColor;
-                  settings_dialog = SettingsDialog(
+                  settings_dialog = ServoSettingsDialog(
                     board: data,
                     device: device,
                     title: 'Servo settings',
-                    pinsStructure: [
-                      {
-                        "name": "control",
-                        "icon": icon,
-                        "color": Colors.white70,
-                      }
-                    ],
                   );
                   control_dialog = ServoControlDialog(
                     board: data,
                     device: device,
-                    title: device["name"]+" servo",
+                    title: device["name"]+" servo"
                   );
                 }
                 else {
