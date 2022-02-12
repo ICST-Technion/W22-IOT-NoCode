@@ -55,7 +55,7 @@ exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).
 
     for(var i=0; i<devices.length; ++i) {
       if(devices[i].name == sensor_name) {
-        devices[i].data = devices[i].data.concat(sensor_data);
+        devices[i].data = devices[i].data.concat(sensor_data).slice(-1000); // keep 1000 values
         break;
       }
     }
