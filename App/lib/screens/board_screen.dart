@@ -9,7 +9,7 @@ import 'package:app/widgets/device_control/led_control_dialog.dart';
 import 'package:app/widgets/device_settings/led_settings_dialog.dart';
 import 'package:app/widgets/device_control/servo_control_dialog.dart';
 import 'package:app/widgets/device_settings/servo_settings_dialog.dart';
-import 'package:app/widgets/device_control/sensor_control_dialog.dart';
+import 'package:app/screens/sensor_control_screen.dart';
 import 'package:app/widgets/device_settings/sensor_settings_dialog.dart';
 import 'package:app/res/custom_icons.dart';
 
@@ -85,14 +85,14 @@ class _BoardScreenState extends State<BoardScreen> {
     );
   }
 
-  Widget _queryDeviceList(DocumentReference board_ref) {
+  Widget _queryDeviceList(DocumentReference boardRef) {
 
     if (_user == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('boards').doc(board_ref.id).snapshots(),
+      stream: FirebaseFirestore.instance.collection('boards').doc(boardRef.id).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -112,18 +112,18 @@ class _BoardScreenState extends State<BoardScreen> {
 
                 IconData icon;
                 Color color;
-                var settings_dialog = null;
-                var control_dialog = null;
+                var settingsDialog = null;
+                var controlDialog = null;
 
                 if(device["type"] == "led") {
                   icon = CustomIcons.led;
                   color = CustomColors.ledColor;
-                  settings_dialog = LedSettingsDialog(
+                  settingsDialog = LedSettingsDialog(
                     board: data,
                     device: device,
                     title: 'Led RGB settings',
                     );
-                  control_dialog = LedControlDialog(
+                  controlDialog = LedControlDialog(
                     board: data,
                     device: device,
                     title: device["name"]+" LED",
@@ -132,12 +132,12 @@ class _BoardScreenState extends State<BoardScreen> {
                 else if(device["type"] == "sensor") {
                   icon = CustomIcons.sensor;
                   color = CustomColors.sensorColor;
-                  settings_dialog = SensorSettingsDialog(
+                  settingsDialog = SensorSettingsDialog(
                     board: data,
                     device: device,
                     title: 'Sensor settings',
                   );
-                  control_dialog = SensorControlDialog(
+                  controlDialog = SensorControlScreen(
                       board: data,
                       device: device,
                       title: device["name"]+" sensor"
@@ -146,12 +146,12 @@ class _BoardScreenState extends State<BoardScreen> {
                 else if(device["type"] == "servo") {
                   icon = CustomIcons.servo;
                   color = CustomColors.servoColor;
-                  settings_dialog = ServoSettingsDialog(
+                  settingsDialog = ServoSettingsDialog(
                     board: data,
                     device: device,
                     title: 'Servo settings',
                   );
-                  control_dialog = ServoControlDialog(
+                  controlDialog = ServoControlDialog(
                     board: data,
                     device: device,
                     title: device["name"]+" servo"
@@ -179,13 +179,18 @@ class _BoardScreenState extends State<BoardScreen> {
                       padding: const EdgeInsets.all(20.0),
                     ),
                     onTap: () {
-                      showDialog(context: context, builder: (BuildContext context) {
-                        return control_dialog;
-                      });
+                      if(device["type"] == "sensor") {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => controlDialog));
+                      }
+                      else {
+                        showDialog(context: context, builder: (BuildContext context) {
+                          return controlDialog;
+                        });
+                      }
                     },
                     onLongPress: () {
                       showDialog(context: context, builder: (BuildContext context) {
-                        return settings_dialog;
+                        return settingsDialog;
                       });
                     },
                   ),
@@ -196,15 +201,15 @@ class _BoardScreenState extends State<BoardScreen> {
     );
   }
 
-  void add_device_dialog(String device_type, String board_id) => showDialog(context: context, builder: (BuildContext context) {
+  void add_device_dialog(String deviceType, String boardId) => showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("Device name"),
         content: TextField(
           onSubmitted: (String value) {
-            FirebaseFirestore.instance.collection("board-configs").doc(board_id).update({
+            FirebaseFirestore.instance.collection("board-configs").doc(boardId).update({
               "devices": FieldValue.arrayUnion([{
                 "name": value,
-                "type": device_type,
+                "type": deviceType,
                 "pins": []
               }])
             });

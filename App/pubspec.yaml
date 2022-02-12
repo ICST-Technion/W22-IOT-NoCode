@@ -43,6 +43,7 @@ dependencies:
   numberpicker: ^2.1.1
   flutter_switch: ^0.3.2
   knob_widget: ^1.0.0
+  syncfusion_flutter_charts: ^19.4.50
 
 dev_dependencies:
   flutter_test:

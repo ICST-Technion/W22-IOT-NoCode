@@ -4,7 +4,7 @@ import 'package:app/res/custom_icons.dart';
 
 
 class DeviceDialog extends StatefulWidget {
-  const DeviceDialog({Key key, this.board, this.device, this.title, @required this.pinsStructure, this.buildFunction, this.onInitComplete, this.onPreSave, this.removeButton=false}) : super(key: key);
+  const DeviceDialog({Key key, this.board, this.device, this.title, @required this.pinsStructure, this.buildFunction, this.onInitComplete, this.onPreSave, this.removeButton=false, this.saveButton=true}) : super(key: key);
 
   final Map<String, dynamic> board;
   final List<Map<String, dynamic>> pinsStructure;
@@ -14,6 +14,7 @@ class DeviceDialog extends StatefulWidget {
   final Function(Map<String, Map<String, dynamic>>) onInitComplete;
   final Function(Map<String, Map<String, dynamic>>) onPreSave;
   final bool removeButton;
+  final bool saveButton;
 
   @override
   _DeviceDialogState createState() => _DeviceDialogState();
@@ -71,8 +72,10 @@ class _DeviceDialogState extends State<DeviceDialog> {
   @override
   Widget build(BuildContext context) {
 
-    List<Widget> actions = [
-      TextButton(
+    List<Widget> actions = [];
+
+    if(widget.saveButton) {
+      actions += [TextButton(
           style: TextButton.styleFrom(
             primary: Colors.white70,
           ),
@@ -102,7 +105,9 @@ class _DeviceDialogState extends State<DeviceDialog> {
             Navigator.pop(context);
           }
       )
-    ];
+
+      ];
+    }
 
     if(widget.removeButton) {
       actions += [IconButton(
