@@ -32,7 +32,7 @@ exports.configUpdate = functions.region(functions.config().iot.core.region).fire
           	binaryData: dataValue
           });
         }
-    );
+);
 
 // on state update -> update DB
 exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsub.topic(functions.config().iot.core.topic).onPublish(async (message: functions.pubsub.Message) => {
@@ -41,7 +41,29 @@ exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsu
     await admin.firestore().collection('boards').doc(boardId).update({
       "devices": message.json.devices
     })
-  });
+});
+
+// on sensor data -> update DB
+exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).pubsub.topic(functions.config().iot.core.sensor_topic).onPublish(async (message: functions.pubsub.Message) => {
+
+    const boardId = message.attributes.deviceId;
+    const sensor_data = message.json.data;
+    const sensor_name = message.json.name;
+
+    console.log(`Received data from "${sensor_name}" sensor of "${boardId}" board`);
+    var devices = await (await admin.firestore().collection('boards').doc(boardId).get()).get('devices');
+
+    for(var i=0; i<devices.length; ++i) {
+      if(devices[i].name == sensor_name) {
+        devices[i].data = devices[i].data.concat(sensor_data);
+        break;
+      }
+    }
+
+    await admin.firestore().collection('boards').doc(boardId).update({
+      "devices": devices
+    });
+});
 
 // on pending -> check device
 exports.pendingUpdate = functions.region(functions.config().iot.core.region).firestore.document("pending/{device}").onWrite(async(change: functions.Change<admin.firestore.DocumentSnapshot>, context: functions.EventContext) => {

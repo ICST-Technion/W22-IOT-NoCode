@@ -9,12 +9,14 @@ export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)
 export CLOUD_REGION="europe-west1"
 export REGISTRY_ID="iot-registry"
 export TOPIC="iot-topic"
+export SENSOR_TOPIC="sensor-data"
 
 cd functions
 npm install
     firebase functions:config:set \
     iot.core.region=$CLOUD_REGION \
     iot.core.registry=$REGISTRY_ID \
-    iot.core.topic=$TOPIC
+    iot.core.topic=$TOPIC \
+    iot.core.sensor_topic=$SENSOR_TOPIC
 firebase use $GCLOUD_PROJECT
 firebase deploy
