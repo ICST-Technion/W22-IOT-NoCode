@@ -16,13 +16,21 @@
 * Set default values for gcloud:
 
 	`gcloud config set project YOUR_PROJECT_ID`
-* Create PubSub topic for device data:
+* Create PubSub topic for board's data (state/config):
 	
 	`gcloud pubsub topics create iot-topic`
 
-* Create PubSub subscription for device data:
+* Create PubSub subscription for board's data:
 	
 	`gcloud pubsub subscriptions create --topic iot-topic iot-subscription`
+
+* Create PubSub topic for sensor's live data (telemetry):
+	
+	`gcloud pubsub topics create sensor-data`
+
+* Create PubSub subscription for sensor's live data:
+	
+	`gcloud pubsub subscriptions create --topic sensor-data sensor-data-subscription`
 
 * Create device registry:
 	
