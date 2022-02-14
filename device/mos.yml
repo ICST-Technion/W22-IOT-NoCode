@@ -12,12 +12,17 @@ tags:
 
 filesystem:
   - fs
+ 
+
+config_schema:
+  - ["sys.tz_spec", "EET-2EEST,M4.1.5/0,M10.5.5/0"] # Timezone spec in tzset format
 
 libs:
   - location: https://github.com/mongoose-os-libs/boards
   - location: https://github.com/mongoose-os-libs/js-demo-bundle
   - location: https://github.com/mongoose-os-libs/pwm
-
+  - location: https://github.com/mongoose-os-libs/mjs
+  - location: https://github.com/mongoose-os-libs/adc
 conds:
   - when: mos.platform == "esp32"
     apply:
