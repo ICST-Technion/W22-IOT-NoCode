@@ -51,7 +51,7 @@ exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).
     const sensor_name = message.json.name;
 
     console.log(`Received data from "${sensor_name}" sensor of "${boardId}" board`);
-    var devices = await (await admin.firestore().collection('boards').doc(boardId).get()).get('devices');
+    var devices = await (await admin.firestore().collection('sensors').doc(boardId).get()).get('devices');
 
     for(var i=0; i<devices.length; ++i) {
       if(devices[i].name == sensor_name) {
@@ -60,7 +60,7 @@ exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).
       }
     }
 
-    await admin.firestore().collection('boards').doc(boardId).update({
+    await admin.firestore().collection('sensors').doc(boardId).update({
       "devices": devices
     });
 });
@@ -105,7 +105,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
 
     batch.set(deviceRef, device);
 
-        // Generate a default configuration
+    // Generate a default configuration
     const configRef = admin.firestore().doc(`board-configs/${deviceId}`);
     const config = {
       id: pending!.serial_number,
@@ -113,6 +113,16 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
       devices: []
     };
     batch.set(configRef, config);
+
+
+    // Generate a default sensors document
+    const sensorsRef = admin.firestore().doc(`sensors/${deviceId}`);
+    const sensors = {
+      id: pending!.serial_number,
+      owner: pending!.owner,
+      devices: []
+    };
+    batch.set(sensorsRef, sensors);
 
     // Remove the pending device entry
     batch.delete(change.after.ref);

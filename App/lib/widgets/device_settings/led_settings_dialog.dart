@@ -44,7 +44,7 @@ class _LedSettingsDialogState extends State<LedSettingsDialog> {
           "icon": CustomIcons.led,
           "color": Colors.blueAccent
         }
-      ],
+      ]
     );
   }
 }

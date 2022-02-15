@@ -30,7 +30,7 @@ class _ServoSettingsDialogState extends State<ServoSettingsDialog> {
           "icon": CustomIcons.servo,
           "color": Colors.white70
         }
-      ],
+      ]
     );
   }
 }

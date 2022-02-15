@@ -210,6 +210,7 @@ class _BoardScreenState extends State<BoardScreen> {
               "devices": FieldValue.arrayUnion([{
                 "name": value,
                 "type": deviceType,
+                "active": 0,
                 "pins": []
               }])
             });

@@ -2,6 +2,7 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +41,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
 
   Widget build_body() {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('boards').doc(widget.board["id"]).snapshots(),
+      stream: FirebaseFirestore.instance.collection('sensors').doc(widget.board["id"]).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -60,10 +61,42 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
               }
             }
             return Column(children: [
-              build_chart(sensor)
+              Text("Sensor value: " + (sensor["data"] as List).last["value"].toString()),
+              build_chart(sensor),
+              build_active_switch(sensor["active"])
             ]);
         }
       },
+    );
+  }
+
+  Widget build_active_switch(active) {
+    return FlutterSwitch(
+      activeColor: Colors.green,
+      inactiveColor: const Color(0x4D6CC770),
+      width: 100.0,
+      height: 50.0,
+      valueFontSize: 25.0,
+      toggleSize: 25.0,
+      value: active == 1 ? true : false,
+      borderRadius: 30.0,
+      padding: 8.0,
+      showOnOff: true,
+      onToggle: (val) {
+
+          List devices = widget.board["devices"];
+
+          for(var i=0; i<devices.length; ++i) {
+            if (devices[i]["name"] == widget.device["name"]) {
+              devices[i]["active"] = val ? 1 : 0;
+              break;
+            }
+          }
+
+          FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
+            "devices": devices
+          });
+      }
     );
   }
 
