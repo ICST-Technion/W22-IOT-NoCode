@@ -35,7 +35,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                         value: pin["number"],
                         itemWidth: 55,
                         minValue: 1,
-                        maxValue: 30,
+                        maxValue: 39,
                         step: 1,
                         axis: Axis.horizontal,
                         decoration: BoxDecoration(
