@@ -4,7 +4,7 @@ import 'package:app/res/custom_icons.dart';
 
 
 class DeviceDialog extends StatefulWidget {
-  const DeviceDialog({Key key, this.board, this.device, this.title, @required this.pinsStructure, this.buildFunction, this.onInitComplete, this.onPreSave, this.removeButton=false, this.saveButton=true}) : super(key: key);
+  const DeviceDialog({Key key, this.board, this.device, this.title, @required this.pinsStructure, this.buildFunction, this.onInitComplete, this.onPreSave, this.removeButton=false, this.saveButton=true, this.fieldsNotToSave=const []}) : super(key: key);
 
   final Map<String, dynamic> board;
   final List<Map<String, dynamic>> pinsStructure;
@@ -15,6 +15,7 @@ class DeviceDialog extends StatefulWidget {
   final Function(Map<String, Map<String, dynamic>>) onPreSave;
   final bool removeButton;
   final bool saveButton;
+  final List<String> fieldsNotToSave;
 
   @override
   _DeviceDialogState createState() => _DeviceDialogState();
@@ -91,7 +92,9 @@ class _DeviceDialogState extends State<DeviceDialog> {
             for(var i=0; i<devices.length; ++i) {
               if(devices[i]["name"] == widget.device["name"]) {
                 devices[i]["pins"] = _pinsMapToDbList(_pinsMap);
-                break;
+              }
+              for(var field in widget.fieldsNotToSave) {
+                devices[i].remove(field);
               }
             }
 

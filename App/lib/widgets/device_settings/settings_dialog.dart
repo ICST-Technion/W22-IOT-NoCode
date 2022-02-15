@@ -4,12 +4,13 @@ import 'package:app/widgets/device_dialog.dart';
 
 
 class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({Key key, this.board, this.device, this.title, this.pinsStructure}) : super(key: key);
+  const SettingsDialog({Key key, this.board, this.device, this.title, this.pinsStructure, this.fieldsNotToSave = const []}) : super(key: key);
 
   final Map<String, dynamic> board;
   final dynamic device;
   final String title;
   final List<Map<String, dynamic>> pinsStructure;
+  final List<String> fieldsNotToSave;
 
   @override
   _SettingsDialogState createState() => _SettingsDialogState();
@@ -65,7 +66,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
         pinsStructure: widget.pinsStructure,
         buildFunction: (Map<String, Map<String, dynamic>> pinsMap) {
           return Column(children: _buildPinRows(pinsMap));
-        }
+        },
+      fieldsNotToSave: widget.fieldsNotToSave,
     );
   }
 }

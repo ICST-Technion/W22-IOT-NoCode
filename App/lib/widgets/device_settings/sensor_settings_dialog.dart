@@ -26,10 +26,12 @@ class _SensorSettingsDialogState extends State<SensorSettingsDialog> {
         {
           "name": "data",
           "number": 1,
+          "active": 0,
           "value": 0, // dummy
           "icon": CustomIcons.sensor,
         },
       ],
+      fieldsNotToSave: const ["data"],
     );
   }
 }
