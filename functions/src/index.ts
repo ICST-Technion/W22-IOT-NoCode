@@ -40,7 +40,7 @@ exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsu
     const boardId = message.attributes.deviceId;
     await admin.firestore().collection('boards').doc(boardId).update({
       "devices": message.json.devices
-    })
+    });
 });
 
 // on sensor data -> update DB
@@ -53,11 +53,19 @@ exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).
     console.log(`Received data from "${sensor_name}" sensor of "${boardId}" board`);
     var devices = await (await admin.firestore().collection('sensors').doc(boardId).get()).get('devices');
 
-    for(var i=0; i<devices.length; ++i) {
+    var i;
+    for(i=0; i<devices.length; ++i) {
       if(devices[i].name == sensor_name) {
-        devices[i].data = devices[i].data.concat(sensor_data).slice(-1000); // keep 1000 values
+        devices[i].data = devices[i].data.concat(sensor_data).slice(-10); // keep 10 values
         break;
       }
+    }
+
+    if(i == devices.length) {
+      devices.push({
+        "data": sensor_data,
+        "name": sensor_name
+      });
     }
 
     await admin.firestore().collection('sensors').doc(boardId).update({

@@ -76,7 +76,7 @@ class _BoardScreenState extends State<BoardScreen> {
               child: const Icon(CustomIcons.servo),
               backgroundColor: CustomColors.servoColor,
               foregroundColor: Colors.white,
-              label: 'Servo engine',
+              label: 'Servo motor',
               onTap: () {add_device_dialog("servo", boardDocument.id);}
           )
         ],

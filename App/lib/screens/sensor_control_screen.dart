@@ -22,6 +22,9 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
   @override
   void initState() {
     super.initState();
+    FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
+      "devices": widget.board["devices"]
+    });
   }
 
   @override
@@ -39,7 +42,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
     );
   }
 
-  Widget build_body() {
+  Widget build_chart_wrapper() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('sensors').doc(widget.board["id"]).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -60,14 +63,65 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
                 break;
               }
             }
-            return Column(children: [
-              Text("Sensor value: " + (sensor["data"] as List).last["value"].toString()),
-              build_chart(sensor),
-              build_active_switch(sensor["active"])
-            ]);
+
+            if (sensor == null) {
+              return Column(children: const [
+                Text("There is no sensor data yet"),
+              ]);
+            }
+            else {
+              return Column(children: [
+                Text("Sensor value: " + (sensor["data"] as List).last["value"].toString()),
+                build_chart(sensor),
+              ]);
+            }
         }
       },
     );
+  }
+
+  Widget build_switch_wrapper() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('boards').doc(widget.board["id"]).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(child: CircularProgressIndicator());
+          default:
+            var data = snapshot.data.data() as Map<String, dynamic>;
+            var devices = data["devices"] as List<dynamic>;
+
+            var sensor = null;
+
+            for (var d in devices) {
+              if (d["name"] == widget.device["name"]) {
+                sensor = d;
+                break;
+              }
+            }
+
+            var children = [build_active_switch(sensor["active"])];
+
+            return Column(
+                children: children
+            );
+        }
+      },
+    );
+  }
+
+
+  Widget build_body() {
+
+    var children = [
+      build_chart_wrapper(),
+      build_switch_wrapper()
+    ];
+
+    return Column(children: children);
   }
 
   Widget build_active_switch(active) {
@@ -88,7 +142,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
 
           for(var i=0; i<devices.length; ++i) {
             if (devices[i]["name"] == widget.device["name"]) {
-              devices[i]["active"] = val ? 1 : 0;
+              devices[i]["active"] = (val == true ? 1 : 0);
               break;
             }
           }
@@ -96,6 +150,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
             "devices": devices
           });
+
       }
     );
   }
@@ -119,6 +174,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
             )
           ),
           series: <LineSeries<SensorData, DateTime>>[LineSeries<SensorData, DateTime>(
+              enableTooltip: true,
               dataSource:  sensor_data,
               xValueMapper: (SensorData data, _) => data.time,
               yValueMapper: (SensorData data, _) => data.value,
