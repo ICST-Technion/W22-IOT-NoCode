@@ -1,4 +1,4 @@
-# Smart home
+# IOT No Code
 ## Setup Google Iot Core
 * Install [gcloud command line tool](https://cloud.google.com/sdk/gcloud/)
 * Authenticate with Google Cloud:
@@ -46,12 +46,13 @@
 * mos build - builds the base javascript engine - should be done only once
 * mos flash - sends the engine to the device
 * mos gcp-iot-setup - registers the device with Google and sends the certificate to the device
-* mos put fs/init.js sends the updated .js code to the device - should be called on each change we want to send
+* mos put fs/init.js sends the updated .js code to the device - should be called on each change we want to send. A reboot needs to be done in order to make the device run the new code.
 * mos call Sys.Reboot - restarts the device with the updated code
-* mos wifi - setups the wifi on the device and reboots it
+* mos wifi <SSID> <password> - setups the wifi on the device and reboots it. Write your wifi SSID and the password instead if "<SSID>" and "<password>".
 
 
-## Device configuration JSON
+## Device configurations JSON
+### State update
 The cloud will send configuration updates to the following topic:
 
 `/devices/<device id>/config`
@@ -60,18 +61,28 @@ And the device should respond with a corresponding state update to the following
 
 `/devices/<device id>/state`
 
-The configuration is of the following format:
+The configuration is in the following format:
 
 ```
 config/state = {
-	"pins": [... list of pins ...]
+	"devices": [... list of devices ...]
+}
+```
+Where each device has the following attributes:
+```
+{
+	"name": string,
+	"active": 0 or 1,
+	"pins": [... list of pins ...],
+	"type": string
 }
 ```
 
-Each pin is of the following format:
+And each pin is in the following format:
 
 ```
 {
+	name: string,
 	number: int,
 	value: bool
 }
@@ -79,6 +90,23 @@ Each pin is of the following format:
 
 If a pin is missing from the config JSON it will be turned off on the device.
 
+### Sensors telemetry data updates
+Sensors report data in the following format:
+```
+{
+	name: string,
+	data: []
+}
+```	
+Where the data is comprised form the following attributes :
+```
+{
+	time: date-"T"-hour-minute-seconds-"Z" (e.g: 2022-02-16T18:04:24Z),
+	value: int
+}
+```
+The data is saved in a different collection named "sensors", and the 10 most recent records are stored in the collection.
+These records are displayed in a graph in the sensor's screen.
 
 ## Create database
 Run `gcloud app create --region=europe-west`
