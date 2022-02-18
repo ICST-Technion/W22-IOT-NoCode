@@ -1,22 +1,20 @@
 # IOT No Code
 
-## Adding a new ESP32 controller to the app
-Use our QR generator (or any other) by running `qr_generator/qr_generator.sh` with the following arguments:
-- **Serial Number**: The id of the ESP as it appears in Google IoT-core
-- **Public Key**: The public key that mongoose created for you (also appears in Google IoT-core)
+- [IOT No Code](#iot-no-code)
+  * [Setup Google Cloud](#setup-google-cloud)
+  * [Deploy Google cloud functions](#deploy-google-cloud-functions)
+  * [Setup Mongoose workspace](#setup-mongoose-workspace)
+    + [Useful commands](#useful-commands)
+  * [Adding a new ESP32 controller](#adding-a-new-esp32-controller)
+  * [Board configuration](#board-configuration)
+  * [ESP32 pins description](#esp32-pins-description)
+  * [Device configurations JSON](#device-configurations-json)
+    + [State update](#state-update)
+    + [Sensors telemetry data updates](#sensors-telemetry-data-updates)
+  * [Troubleshoot](#troubleshoot)
 
-Note that you are required to remove the preamble `-----BEGIN PUBLIC KEY-----` and the appendix `-----END PUBLIC KEY-----`.
 
-After you scan the QR the authentication proccess starts. If it succeeds, the board is saved in the DB and the user's identifier is set as the board's owner.
-
-Proccess might fail in the following scenarios:
-
-* The board already exists in the DB (either attached to the user who tried to add it or to a different user)
-* The board isn't registed to Google IoT-core. In this case you may need to register it again with the following command in the mos console:
-`mos gcp-iot-setup --gcp-project <YOUR PROJECT ID> --gcp-region europe-west1 --gcp-registry iot-registry`
-* An incorrect public key was inserted (or in a wrong format).
-
-## Setup Google Iot Core
+## Setup Google Cloud
 * Install [gcloud command line tool](https://cloud.google.com/sdk/gcloud/)
 * Authenticate with Google Cloud:
 	
@@ -57,15 +55,50 @@ Proccess might fail in the following scenarios:
 	
 	`gcloud iot registries create iot-registry --region europe-west1 --event-notification-config=topic=iot-topic`
 
-## Setup device
-* Get project ID of your new project and then run the following command in mos:
+* Create Firebase app:
 
-	`mos gcp-iot-setup --gcp-project YOUR_PROJECT_ID --gcp-region europe-west1 --gcp-registry iot-registry`
+	Run `gcloud app create --region=europe-west`
+	
+	And then `gcloud alpha firestore databases create --project=PROJECT_ID --region=europe-west`
+
+
+## Deploy Google cloud functions
+Use `./functions_deploy` script to deploy the cloud functions and the database rules each time you make changes to them.
 
 ## Setup Mongoose workspace
-In order to be able to deploy code to your esp, you should install the mongoose os client.
-Follow the instruction in the tutorial in:
-https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
+To be able to execute `mos` commands, you should install Mongoose OS client on your computer.
+
+### Useful commands
+* `mos build` - builds the base javascript engine - should be done only once
+* `mos flash` - sends the engine to the device
+* `mos gcp-iot-setup` - registers the device with Google and sends the certificate to the device
+* `mos put fs/init.js` sends the updated .js code to the device - should be called on each change we want to send. A reboot needs to be done in order to make the device run the new code.
+* `mos call Sys.Reboot` - restarts the device with the updated code
+* `mos wifi <SSID> <password>` - setups the wifi on the device and reboots it. Write your wifi SSID and the password instead if "<SSID>" and "<password>".
+
+Please check the following tutorial for help: https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
+
+
+## Adding a new ESP32 controller
+Use our QR generator (or any other) by running `qr_generator/qr_generator.sh` with the following arguments:
+- **Serial Number**: The id of the ESP as it appears in Google IoT-core
+- **Public Key**: The public key that mongoose created for you (also appears in Google IoT-core)
+
+	Note that you are required to remove the preamble `-----BEGIN PUBLIC KEY-----` and the appendix `-----END PUBLIC KEY-----`.
+
+After you scan the QR the authentication proccess starts. If it succeeds, the board is saved in the DB and the user's identifier is set as the board's owner.
+
+Proccess might fail in the following scenarios:
+
+* The board already exists in the DB (either attached to the user who tried to add it or to a different user)
+* The board isn't registed to Google IoT-core. In this case you may need to register it again with the following command in the mos console:
+`mos gcp-iot-setup --gcp-project <YOUR PROJECT ID> --gcp-region europe-west1 --gcp-registry iot-registry`
+* An incorrect public key was inserted (or in a wrong format).
+
+## Board configuration
+After you connected a device to board and added it in app, you need to configure its pins.
+The pins can be configured by the setting dialog which can be opened by a **long tap** on the device icon (in the board screen).
+From this dialog the device can also be removed.
 
 ## ESP32 pins description
 The ESP32 pins are diveded into categories as explained in this picture:
@@ -73,15 +106,6 @@ The ESP32 pins are diveded into categories as explained in this picture:
 
 For more information browse to:
 https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
-
-## Some tips when working with Mongoose
-* mos build - builds the base javascript engine - should be done only once
-* mos flash - sends the engine to the device
-* mos gcp-iot-setup - registers the device with Google and sends the certificate to the device
-* mos put fs/init.js sends the updated .js code to the device - should be called on each change we want to send. A reboot needs to be done in order to make the device run the new code.
-* mos call Sys.Reboot - restarts the device with the updated code
-* mos wifi <SSID> <password> - setups the wifi on the device and reboots it. Write your wifi SSID and the password instead if "<SSID>" and "<password>".
-
 
 ## Device configurations JSON
 ### State update
@@ -140,16 +164,10 @@ Where the data is comprised form the following attributes :
 The data is saved in a different collection named "sensors", and the 10 most recent records are stored in the collection.
 These records are displayed in a graph in the sensor's screen.
 
-## Create database
-Run `gcloud app create --region=europe-west`
-And then `gcloud alpha firestore databases create --project=iot-project-b52bb --region=europe-west`
-
-Use `./functions_deploy` script to deploy the functions
 
 ## Troubleshoot
-### Google sign-in succeed but the app's login proccess gets stuck and the following exception appears in the "run" terminal of android studio:
-#### [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: PlatformException(sign_in_failed, com.google.android.gms.common.api.ApiException: 10: , null, null)
-### Solution:
+### Google sign-in succeed but the app's login proccess gets stuck and the following exception appears in the "run" terminal of android studio: [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: PlatformException(sign_in_failed, com.google.android.gms.common.api.ApiException: 10: , null, null)
+### Solution
 You need to create a fingerprint in the firebase console. Go to "Project Setting" and click on "Add fingerprint". Create a SHA1 key by using a tool named "Keytool" which is built-in in windows and linux.
 In Windows:
 Open the CMD, if keytool is not included in your PATH, go to your JAVA folder in either program files or program files (x86). Search for Keytool and change your CMD current directory to this folder. run the following command:
@@ -160,22 +178,22 @@ keytool -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore
 enter the password: "android", copy the SHA1 key and paste it firebase fingerprint.
 
 ### Google services.json is missing
-### Solution:
+### Solution
 You need to download this file from the firebase console. Go to "Project Setting" and click on the button google services.json.
 Save this file under the path: ***your project path***\App\android\app
 
 ### The esp gets stuck in a loop and emits his dump file to the console
-### Solution:
+### Solution
 You probably have a compilation error in init.js that made the esp crash. You need to replace it to a stable version, and execute the following commands:
 - mos build
 - mos flash
 
 ### The library you added to init.js does not work
-### Solution:
+### Solution
 Lets say your tried to inculde adc library by using this command: load('api_adc.js').
 Please make sure you also added the url of the library in your mos.yml file:
 "- location: https://github.com/mongoose-os-libs/adc"
 
 ### Mongoose client is not running after launching mos.exe
-### Solution:
+### Solution
 A previous proccess of mos.exe is still running on your computer. You should open kill it and then try to launch the app again.
