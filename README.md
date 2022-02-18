@@ -1,4 +1,5 @@
-# IOT No Code
+
+# <img src="https://github.com/skilef/IOT-project/blob/master/App/assets/logo.png" width="50" height="50" />IOT No Code
 
 - [IOT No Code](#iot-no-code)
   * [Setup Google Cloud](#setup-google-cloud)
