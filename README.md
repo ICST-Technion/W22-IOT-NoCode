@@ -114,18 +114,6 @@ And then `gcloud alpha firestore databases create --project=iot-project-b52bb --
 
 Use `./functions_deploy` script to deploy the functions
 
-
-## Tasks to do
-- [x] Send configuration and receive state between IoT core and the ESP32
-- [x] Sign-in with Google
-- [x] Add device (QR code)
-- [ ] Feature: Device window
-- [ ] BONUS: Setup device WIFI through Bluethooth (in the "add device" screen)
-- [ ] Improvement: Make cloud functions more typed
-- [x] BUG: If device already exists, make sure to remove the "pending" records
-screen
-
-
 ## Troubleshoot
 ### Google sign-in succeed but the app's login proccess gets stuck and the following exception appears in the "run" terminal of android studio:
 #### [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: PlatformException(sign_in_failed, com.google.android.gms.common.api.ApiException: 10: , null, null)
