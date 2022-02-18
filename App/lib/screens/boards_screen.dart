@@ -6,6 +6,7 @@ import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
 import 'package:app/widgets/bottom_navigation_bar.dart';
 
+// Boards list screen
 
 class BoardsScreen extends StatefulWidget {
   const BoardsScreen({Key key, this.title}) : super(key: key);
@@ -34,10 +35,16 @@ class _BoardsScreenState extends State<BoardsScreen> {
         backgroundColor: CustomColors.navy,
         title: AppBarTitle(title: widget.title),
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add a board',
-        child: const Icon(Icons.add),
-        onPressed: () => _registerDevice(context),
+      floatingActionButton: SizedBox(
+        width: 70,
+        height: 70,
+        child: FittedBox(
+          child: FloatingActionButton(
+            tooltip: 'Add a board by scanning its QR code',
+            child: const Icon(Icons.qr_code_2_rounded, size: 30),
+            onPressed: () => _registerDevice(context),
+          )
+        )
       ),
       bottomNavigationBar: const BottomNavbar(),
       body: _queryBoardList()

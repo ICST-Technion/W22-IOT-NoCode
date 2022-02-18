@@ -44,6 +44,7 @@ dependencies:
   flutter_switch: ^0.3.2
   knob_widget: ^1.0.0
   syncfusion_flutter_charts: ^19.4.50
+  material_dialogs: ^1.1.1
 
 dev_dependencies:
   flutter_test:

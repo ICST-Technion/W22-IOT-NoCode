@@ -19,9 +19,24 @@ class SensorControlScreen extends StatefulWidget {
 
 class _SensorControlScreenState extends State<SensorControlScreen> {
 
+  ZoomPanBehavior _zoomPanBehavior;
+  TooltipBehavior _tooltipBehavior;
+
   @override
   void initState() {
     super.initState();
+
+    _zoomPanBehavior = ZoomPanBehavior(
+        enablePinching: true,
+        enableDoubleTapZooming: true,
+        enablePanning: true
+    );
+
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+    );
+
+    // when the sensor window open, update the device configuration with the current state
     FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
       "devices": widget.board["devices"]
     });
@@ -38,11 +53,11 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           title: AppBarTitle(title: widget.title),
         ),
         bottomNavigationBar: const BottomNavbar(),
-        body: build_body()
+        body: buildBody()
     );
   }
 
-  Widget build_chart_wrapper() {
+  Widget buildChartWrapper() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('sensors').doc(widget.board["id"]).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -71,8 +86,10 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
             }
             else {
               return Column(children: [
-                Text("Sensor value: " + (sensor["data"] as List).last["value"].toString()),
-                build_chart(sensor),
+                Text("Sensor value: " + (sensor["data"] as List).last["value"].toString(), style: TextStyle(
+                  fontSize: 20
+                ),),
+                buildChart(sensor),
               ]);
             }
         }
@@ -103,7 +120,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
               }
             }
 
-            var children = [build_active_switch(sensor["active"])];
+            var children = [buildActiveSwitch(sensor["active"])];
 
             return Column(
                 children: children
@@ -114,17 +131,17 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
   }
 
 
-  Widget build_body() {
+  Widget buildBody() {
 
     var children = [
-      build_chart_wrapper(),
+      buildChartWrapper(),
       build_switch_wrapper()
     ];
 
     return Column(children: children);
   }
 
-  Widget build_active_switch(active) {
+  Widget buildActiveSwitch(active) {
     return FlutterSwitch(
       activeColor: Colors.green,
       inactiveColor: const Color(0x4D6CC770),
@@ -147,6 +164,8 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
             }
           }
 
+          // send the updated sensor config which will cause a stream update
+
           FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
             "devices": devices
           });
@@ -155,39 +174,40 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
     );
   }
 
-  Widget build_chart(Map<String, dynamic> sensor) {
+  Widget buildChart(Map<String, dynamic> sensor) {
 
-    List<SensorData> sensor_data = [];
+    List<SensorData> sensorData = [];
 
     if((sensor["data"] as List).isNotEmpty) {
-      sensor_data = (sensor["data"] as List).map((e) => SensorData(DateTime.parse(e["time"]), e["value"])).toList();
+      sensorData = (sensor["data"] as List).map((e) => SensorData(DateTime.parse(e["time"]), e["value"])).toList();
     }
 
     return Center(
-      child: Container(
-        child: SfCartesianChart(
-          title: ChartTitle(text: 'Real-time sensor data'),
-          primaryXAxis: DateTimeAxis(
-            name: "Time",
-            title: AxisTitle(
-              text: "Time"
+      child: SfCartesianChart(
+        title: ChartTitle(text: 'Real-time sensor data'),
+        zoomPanBehavior: _zoomPanBehavior,
+        tooltipBehavior: _tooltipBehavior,
+        primaryXAxis: DateTimeAxis(
+          name: "Time",
+          title: AxisTitle(
+            text: "Time"
+          )
+        ),
+        series: <LineSeries<SensorData, DateTime>>[LineSeries<SensorData, DateTime>(
+            name: "Data",
+            enableTooltip: true,
+            dataSource:  sensorData,
+            xValueMapper: (SensorData data, _) => data.time,
+            yValueMapper: (SensorData data, _) => data.value,
+            markerSettings: const MarkerSettings(
+              isVisible: true,
+              width: 3,
+              height: 3,
+              shape: DataMarkerType.circle,
+              color: Colors.lightBlueAccent,
+              borderColor: Colors.lightBlueAccent
             )
-          ),
-          series: <LineSeries<SensorData, DateTime>>[LineSeries<SensorData, DateTime>(
-              enableTooltip: true,
-              dataSource:  sensor_data,
-              xValueMapper: (SensorData data, _) => data.time,
-              yValueMapper: (SensorData data, _) => data.value,
-              markerSettings: const MarkerSettings(
-                isVisible: true,
-                width: 3,
-                height: 3,
-                shape: DataMarkerType.circle,
-                color: Colors.lightBlueAccent,
-                borderColor: Colors.lightBlueAccent
-              )
-            )]
-        )
+          )]
       )
     );
   }

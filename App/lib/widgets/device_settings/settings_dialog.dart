@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:app/widgets/device_dialog.dart';
 
+// A generic device settings dialog
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({Key key, this.board, this.device, this.title, this.pinsStructure}) : super(key: key);

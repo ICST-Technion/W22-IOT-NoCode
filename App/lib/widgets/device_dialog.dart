@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/res/custom_icons.dart';
 
+// A general device dialog that is used for all of the dialogs in the project
 
 class DeviceDialog extends StatefulWidget {
   const DeviceDialog({Key key, this.board, this.device, this.title, @required this.pinsStructure, this.buildFunction, this.onInitComplete, this.onPreSave, this.removeButton=false, this.saveButton=true}) : super(key: key);
@@ -133,10 +134,10 @@ class _DeviceDialogState extends State<DeviceDialog> {
       title: Text(widget.title),
       content: Wrap(
         children: [
-          Column(children: [widget.buildFunction(_pinsMap)])
+            Column(children: [widget.buildFunction(_pinsMap)])
         ]
       ),
-      actions: actions
+      actions: actions,
     );
   }
 }

@@ -15,9 +15,9 @@ import 'package:app/res/custom_icons.dart';
 
 
 class BoardArguments {
-  final DocumentReference<Object> board_ref;
+  final DocumentReference<Object> boardRef;
 
-  BoardArguments(this.board_ref);
+  BoardArguments(this.boardRef);
 }
 
 
@@ -43,7 +43,7 @@ class _BoardScreenState extends State<BoardScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final boardDocument = (ModalRoute.of(context).settings.arguments as BoardArguments).board_ref;
+    final boardDocument = (ModalRoute.of(context).settings.arguments as BoardArguments).boardRef;
 
     return Scaffold(
       backgroundColor: CustomColors.navy,
@@ -57,27 +57,30 @@ class _BoardScreenState extends State<BoardScreen> {
         icon: Icons.add,
         activeIcon: Icons.close,
         tooltip: 'Add a device',
+        buttonSize: const Size(60, 60),
+        childrenButtonSize: const Size(80, 80),
+        spaceBetweenChildren: 10,
         children: [
           SpeedDialChild(
-            child: const Icon(CustomIcons.led),
+            child: const Icon(CustomIcons.led, size: 40),
             backgroundColor: CustomColors.ledColor,
             foregroundColor: Colors.white,
             label: 'LED RGB',
-            onTap: () {add_device_dialog("led", boardDocument.id);}
+            onTap: () {addDeviceDialog("led", boardDocument.id);}
           ),
           SpeedDialChild(
-              child: const Icon(CustomIcons.sensor),
+              child: const Icon(CustomIcons.sensor, size: 40),
               backgroundColor: CustomColors.sensorColor,
               foregroundColor: Colors.white,
               label: 'Sensor',
-              onTap: () {add_device_dialog("sensor", boardDocument.id);}
+              onTap: () {addDeviceDialog("sensor", boardDocument.id);}
           ),
           SpeedDialChild(
-              child: const Icon(CustomIcons.servo),
+              child: const Icon(CustomIcons.servo, size: 40),
               backgroundColor: CustomColors.servoColor,
               foregroundColor: Colors.white,
               label: 'Servo motor',
-              onTap: () {add_device_dialog("servo", boardDocument.id);}
+              onTap: () {addDeviceDialog("servo", boardDocument.id);}
           )
         ],
       ),
@@ -112,8 +115,8 @@ class _BoardScreenState extends State<BoardScreen> {
 
                 IconData icon;
                 Color color;
-                var settingsDialog = null;
-                var controlDialog = null;
+                StatefulWidget settingsDialog;
+                StatefulWidget controlDialog;
 
                 if(device["type"] == "led") {
                   icon = CustomIcons.led;
@@ -166,29 +169,41 @@ class _BoardScreenState extends State<BoardScreen> {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(15),
                     ),
+                    border: Border.all(
+                      width: 0.5,
+                      color: darken(color, 0.4)
+                    ),
+                    boxShadow: [BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: const Offset(2, 3)
+                    )]
                   ),
                   child: InkWell(
                     child: Ink(
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
-                       children: [
-                         Icon(icon, size: 50),
-                         Text(device["name"])
-                       ],
+                        children: [
+                          Icon(icon, size: 50),
+                          Text(device["name"])
+                        ],
                       ),
                       padding: const EdgeInsets.all(20.0),
                     ),
                     onTap: () {
+                      // For the sensor we navigate to a new route
                       if(device["type"] == "sensor") {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => controlDialog));
                       }
-                      else {
+                      else { // For other devices we open a dialog
                         showDialog(context: context, builder: (BuildContext context) {
                           return controlDialog;
                         });
                       }
                     },
                     onLongPress: () {
+                      // Settings dialog
                       showDialog(context: context, builder: (BuildContext context) {
                         return settingsDialog;
                       });
@@ -201,7 +216,7 @@ class _BoardScreenState extends State<BoardScreen> {
     );
   }
 
-  void add_device_dialog(String deviceType, String boardId) => showDialog(context: context, builder: (BuildContext context) {
+  void addDeviceDialog(String deviceType, String boardId) => showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("Device name"),
         content: TextField(
