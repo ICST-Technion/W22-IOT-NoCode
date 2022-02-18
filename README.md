@@ -45,6 +45,10 @@
 
 	`mos gcp-iot-setup --gcp-project YOUR_PROJECT_ID --gcp-region europe-west1 --gcp-registry iot-registry`
 
+## Setup Mongoose workspace
+In order to be able to deploy code to your esp, you should install the mongoose os client.
+Follow the instruction in the tutorial in:
+https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
 
 ## Some tips when working with Mongoose
 * mos build - builds the base javascript engine - should be done only once
@@ -136,7 +140,6 @@ enter the password: "android", copy the SHA1 key and paste it firebase fingerpri
 You need to download this file from the firebase console. Go to "Project Setting" and click on the button google services.json.
 Save this file under the path: ***your project path***\App\android\app
 
-
 ### The esp gets stuck in a loop and emits his dump file to the console
 ### Solution:
 You probably have a compilation error in init.js that made the esp crash. You need to replace it to a stable version, and execute the following commands:
@@ -148,3 +151,7 @@ You probably have a compilation error in init.js that made the esp crash. You ne
 Lets say your tried to inculde adc library by using this command: load('api_adc.js').
 Please make sure you also added the url of the library in your mos.yml file:
 "- location: https://github.com/mongoose-os-libs/adc"
+
+### Mongoose client is not running after launching mos.exe
+### Solution:
+A previous proccess of mos.exe is still running on your computer. You should open kill it and then try to launch the app again.
