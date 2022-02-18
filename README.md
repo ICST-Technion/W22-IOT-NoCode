@@ -50,6 +50,13 @@ In order to be able to deploy code to your esp, you should install the mongoose 
 Follow the instruction in the tutorial in:
 https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
 
+## ESP32 pins description
+The ESP32 pins are diveded into categories as explained in this picture:
+<img src="https://user-images.githubusercontent.com/49530231/154680189-1af64cc8-112f-4c37-a7c2-a41d2bba8cbc.jpg" width="650" height="450" />
+
+For more information browse to:
+https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+
 ## Some tips when working with Mongoose
 * mos build - builds the base javascript engine - should be done only once
 * mos flash - sends the engine to the device
