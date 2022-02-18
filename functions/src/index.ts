@@ -1,17 +1,30 @@
+/**
+ * This file implements all cloud of the functions that are required for the project.
+ */
+
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as iot from "@google-cloud/iot";
+
+
+// Create Google IoT core device manager client
 const client = new iot.v1.DeviceManagerClient();
 
+// Initialize Firebase Admin
 admin.initializeApp();
 
-// On config change -> send to IoT core
+
+/**
+ * Triggerd on a configuration update of a specific board in Firestore.
+ * When a configuration is being updated, this function sends it directly to the device as an IoT configuration update (as an MQTT message).
+ */
 exports.configUpdate = functions.region(functions.config().iot.core.region).firestore.document("board-configs/{boardId}")
     .onWrite(
         async (change: functions.Change<admin.firestore.DocumentSnapshot>, context: functions.EventContext) => {
 
           const boardId = context.params.boardId;
 
+          // Because board deletion also triggers this function, we handle it with the following condition
           if(!change.after.exists) {
             console.log(`The configuration of board ${boardId} has been deleted`);
             return;
@@ -19,14 +32,21 @@ exports.configUpdate = functions.region(functions.config().iot.core.region).fire
 
           console.log(`Sending a config update to board ${boardId}`);
 
+          // New configuration data
           const data = change.after.data()
+
+          // Relevant configuration for the board
           const config = {
             "devices": data!.devices
           };
 
+          // Get the full IoT-core device path of the board
           const formattedName = client.devicePath(process.env.GCLOUD_PROJECT!, functions.config().iot.core.region, functions.config().iot.core.registry, boardId);
+
+          // Stringify the config and encode it in base64 - as required
           const dataValue = Buffer.from(JSON.stringify(config)).toString("base64");
 
+          // Send the IoT-core configuration though MQTT
           return client.modifyCloudToDeviceConfig({
           	name: formattedName,
           	binaryData: dataValue
@@ -34,33 +54,49 @@ exports.configUpdate = functions.region(functions.config().iot.core.region).fire
         }
 );
 
-// on state update -> update DB
+/**
+ * Triggerd on a state update of a specific board in IoT-core.
+ */
 exports.stateUpdate = functions.region(functions.config().iot.core.region).pubsub.topic(functions.config().iot.core.topic).onPublish(async (message: functions.pubsub.Message) => {
 
+    // Get board ID from the MQTT message attributes
     const boardId = message.attributes.deviceId;
+
+    // Update the relevant board's state document according to the received MQTT state
     await admin.firestore().collection('boards').doc(boardId).update({
       "devices": message.json.devices
     });
 });
 
-// on sensor data -> update DB
+/**
+ * Triggered on a new sensor data (sent to the telemetry MQTT topic).
+ * When the sensor data received, the function updates the relevant sensor device's data in the sensors collection
+ */
 exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).pubsub.topic(functions.config().iot.core.sensor_topic).onPublish(async (message: functions.pubsub.Message) => {
 
     const boardId = message.attributes.deviceId;
     const sensor_data = message.json.data;
     const sensor_name = message.json.name;
 
+    // Maximum sensor data to keep
+    const sensor_data_limit: Number = functions.config().iot.core.sensor_data_limit;
+
     console.log(`Received data from "${sensor_name}" sensor of "${boardId}" board`);
+
+    // Get all devices of the given board
     var devices = await (await admin.firestore().collection('sensors').doc(boardId).get()).get('devices');
 
     var i;
     for(i=0; i<devices.length; ++i) {
       if(devices[i].name == sensor_name) {
-        devices[i].data = devices[i].data.concat(sensor_data).slice(-10); // keep 10 values
+
+        // Add the new data to the relevant device and keep only "sensor_data_limit" of them
+        devices[i].data = devices[i].data.concat(sensor_data).slice(-sensor_data_limit);
         break;
       }
     }
 
+    // If the deivce does not exists, create it
     if(i == devices.length) {
       devices.push({
         "data": sensor_data,
@@ -68,53 +104,61 @@ exports.sensorDataUpdate = functions.region(functions.config().iot.core.region).
       });
     }
 
+    // Update DB
     await admin.firestore().collection('sensors').doc(boardId).update({
       "devices": devices
     });
 });
 
-// on pending -> check device
+/**
+ * Triggered when there is a change in the pending boards collection
+ * If a new board added, this function will check if it is registered in IoT core and will vailidate its key.
+ * Also it will check if the board isn't owned by another user.
+ */
 exports.pendingUpdate = functions.region(functions.config().iot.core.region).firestore.document("pending/{device}").onWrite(async(change: functions.Change<admin.firestore.DocumentSnapshot>, context: functions.EventContext) => {
 
-  const deviceId = context.params.device;
+  // Board's ID
+  const boardId = context.params.device;
 
-  // Verify this is either a create or update
+  // If the b oard is removed, do nothing
   if (!change.after.exists) {
-    console.log(`Pending device removed for ${deviceId}`);
+    console.log(`Pending board removed for ${boardId}`);
     return;
   }
 
-  console.log(`Pending device created for ${deviceId}`);
+  console.log(`Pending board created for ${boardId}`);
   const pending = change.after.data();
 
   try {
-    // Verify device does NOT already exist in Firestore
-    const deviceRef = admin.firestore().doc(`boards/${deviceId}`);
-    const deviceDoc = await deviceRef.get();
 
-    if (deviceDoc.exists) {
-      throw new Error(`${deviceId} is already registered to another user`);
+    // Verify that the board does NOT already exist in Firestore
+    const boardRef = admin.firestore().doc(`boards/${boardId}`);
+    const boardDoc = await boardRef.get();
+
+    if (boardDoc.exists) {
+      throw new Error(`${boardId} is already registered to another user`);
     }
 
-    // Verify device exists in IoT Core
-    const result = await getDevice(deviceId);
+    // Verify board exists in IoT Core
+    const result = await getBoard(boardId);
 
-    // Verify the device public key
-    verifyDeviceKey(pending, result.credentials[0].publicKey!.key!.trim());
+    // Verify the board's public key
+    verifyBoardKey(pending, result.credentials[0].publicKey!.key!.trim());
 
     const batch = admin.firestore().batch();
 
-    // Insert valid device for the requested owner
-    const device = {
+    // Insert valid board for the requested owner
+    const board = {
       id: pending!.serial_number,
       owner: pending!.owner,
       devices: []
     };
 
-    batch.set(deviceRef, device);
+    // Set board
+    batch.set(boardRef, board);
 
-    // Generate a default configuration
-    const configRef = admin.firestore().doc(`board-configs/${deviceId}`);
+    // Set board config
+    const configRef = admin.firestore().doc(`board-configs/${boardId}`);
     const config = {
       id: pending!.serial_number,
       owner: pending!.owner,
@@ -123,23 +167,24 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
     batch.set(configRef, config);
 
 
-    // Generate a default sensors document
-    const sensorsRef = admin.firestore().doc(`sensors/${deviceId}`);
+    // Set board sensors document
+    const sensorsRef = admin.firestore().doc(`sensors/${boardId}`);
     const sensors = {
       id: pending!.serial_number,
       owner: pending!.owner,
       devices: []
     };
+
     batch.set(sensorsRef, sensors);
 
-    // Remove the pending device entry
+    // Remove the pending board entry
     batch.delete(change.after.ref);
 
     await batch.commit();
-    console.log(`Added device ${deviceId} for user ${pending!.owner}`);
+    console.log(`Added board ${boardId} for user ${pending!.owner}`);
   } catch (error) {
-    // Device does not exist in IoT Core or key doesn't match
-    console.error('Unable to register new device', error);
+    // The board does not exist in IoT Core or key doesn't match
+    console.error('Unable to register new board', error);
     change.after.ref.delete();
   }
 
@@ -148,7 +193,7 @@ exports.pendingUpdate = functions.region(functions.config().iot.core.region).fir
 /**
  * Return a Promise to obtain the device from Cloud IoT Core
  */
-function getDevice(deviceId: any): Promise<any> {
+function getBoard(deviceId: any): Promise<any> {
   return new Promise(async (resolve: any, reject: any) => {
 
     const projectId = await client.getProjectId();
@@ -175,7 +220,7 @@ function getDevice(deviceId: any): Promise<any> {
  *
  * Method throws an error if the keys do not match.
  */
-function verifyDeviceKey(pendingDevice: any, deviceKey: string) {
+function verifyBoardKey(pendingDevice: any, deviceKey: string) {
   // Convert the pending key into PEM format
   const chunks = pendingDevice.public_key.match(/(.{1,64})/g);
   chunks.unshift('-----BEGIN PUBLIC KEY-----');

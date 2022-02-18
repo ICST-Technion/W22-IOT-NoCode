@@ -1,22 +1,47 @@
 #!/usr/bin/env bash
 
+############################################################################
+# Deploys the Cloud functions and the Firestore rules to the Google cloud. #
+############################################################################
+
 set -o errexit
 set -o nounset
 set -o pipefail
-#set -o xtrace # uncomment for debugging
 
-export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
+
+# The following parameters can be tweaked for your own project
+
+# Google cloud project region
 export CLOUD_REGION="europe-west1"
+
+# IoT core device registry ID
 export REGISTRY_ID="iot-registry"
+
+# The default config/state topic
 export TOPIC="iot-topic"
+
+# The default telemetry topic
 export SENSOR_TOPIC="sensor-data"
 
+# Sets the maximum amount of sensor data values to keep in the DB for each device
+export SENSOR_DATA_LIMIT=10
+
+
+# Google cloud Project ID
+export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
+
+
 cd functions
+
 npm install
-    firebase functions:config:set \
+
+# Deployment
+
+firebase functions:config:set \
     iot.core.region=$CLOUD_REGION \
     iot.core.registry=$REGISTRY_ID \
     iot.core.topic=$TOPIC \
-    iot.core.sensor_topic=$SENSOR_TOPIC
+    iot.core.sensor_topic=$SENSOR_TOPIC \
+    iot.core.sensor_data_limit=$SENSOR_DATA_LIMIT
 firebase use $GCLOUD_PROJECT
 firebase deploy
