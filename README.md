@@ -12,6 +12,7 @@
     + [State update](#state-update)
     + [Sensors telemetry data updates](#sensors-telemetry-data-updates)
   * [Troubleshoot](#troubleshoot)
+  * [Further development](#further-development)
 
 
 ## Setup Google Cloud
