@@ -1,23 +1,21 @@
-# IOT No Code - User Manual
-## Signing in to the app
-To sign in to our app, the only thing you need to do is to sign in to your Google account.
-No prior registration is required.
-## Adding your ESP32 controller to the app
-Press the button with the QR code icon and scan the QR supplied to you with the esp.
-If you don't have one, use our QR generator by running qr_generator.sh which is located in our Git.
-Open your shell (windows users may use git bash) and run this script with these arguments:
-- **Serial Number**: The id of the ESP.
-- **Public Key**: The public key that mongoose created for you. <br />
-Remove the preamble (-----BEGIN PUBLIC KEY-----) and the appendix (-----END PUBLIC KEY-----). <br />
-For example:	./qr_generator.sh esp32_060C00 MFkwEwYHKoZIzj0CAQYIKo <br /> <br />
-After you scan the QR the authentication proccess starts. If it succeeds, the esp is saved in the DB and the user's identifier is set as the owner of the esp. <br />
-A failure in this proccess might happen in those cases: <br />
-* The esp already exists in the DB (either attached to the user who tried to add it or to a different user).
-* The esp is not recognized by the DB. In this case you may need to register it again with the following command in the mos console: <br />
+# IOT No Code
+
+## Adding a new ESP32 controller to the app
+Use our QR generator (or any other) by running `qr_generator/qr_generator.sh` with the following arguments:
+- **Serial Number**: The id of the ESP as it appears in Google IoT-core
+- **Public Key**: The public key that mongoose created for you (also appears in Google IoT-core)
+
+Note that you are required to remove the preamble `-----BEGIN PUBLIC KEY-----` and the appendix `-----END PUBLIC KEY-----`.
+
+After you scan the QR the authentication proccess starts. If it succeeds, the board is saved in the DB and the user's identifier is set as the board's owner.
+
+Proccess might fail in the following scenarios:
+
+* The board already exists in the DB (either attached to the user who tried to add it or to a different user)
+* The board isn't registed to Google IoT-core. In this case you may need to register it again with the following command in the mos console:
 `mos gcp-iot-setup --gcp-project <YOUR PROJECT ID> --gcp-region europe-west1 --gcp-registry iot-registry`
 * An incorrect public key was inserted (or in a wrong format).
 
-# IOT No Code - Developers Manual
 ## Setup Google Iot Core
 * Install [gcloud command line tool](https://cloud.google.com/sdk/gcloud/)
 * Authenticate with Google Cloud:
