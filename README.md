@@ -19,14 +19,18 @@
 * Create PubSub topic for board's data (state/config):
 	
 	`gcloud pubsub topics create iot-topic`
-
-* Create PubSub subscription for board's data:
 	
+	Go to "Registry details" and under "Cloud Pub/Sub topics" make sure "iot-topic" is your device state topic.
+	
+* Create PubSub subscription for board's data:
+
 	`gcloud pubsub subscriptions create --topic iot-topic iot-subscription`
 
 * Create PubSub topic for sensor's live data (telemetry):
 	
 	`gcloud pubsub topics create sensor-data`
+	
+	Go to "Registry details" and under "Cloud Pub/Sub topics" make sure "sensor-data" is your default telemetry topic.
 
 * Create PubSub subscription for sensor's live data:
 	
@@ -84,7 +88,7 @@ And each pin is in the following format:
 {
 	name: string,
 	number: int,
-	value: bool
+	value: 0 or 1
 }
 ```
 
