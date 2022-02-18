@@ -164,7 +164,6 @@ Where the data is comprised form the following attributes :
 The data is saved in a different collection named "sensors", and the 10 most recent records are stored in the collection.
 These records are displayed in a graph in the sensor's screen.
 
-
 ## Troubleshoot
 ### Google sign-in succeed but the app's login proccess gets stuck and the following exception appears in the "run" terminal of android studio: [ERROR:flutter/lib/ui/ui_dart_state.cc(209)] Unhandled Exception: PlatformException(sign_in_failed, com.google.android.gms.common.api.ApiException: 10: , null, null)
 ### Solution
@@ -197,3 +196,10 @@ Please make sure you also added the url of the library in your mos.yml file:
 ### Mongoose client is not running after launching mos.exe
 ### Solution
 A previous proccess of mos.exe is still running on your computer. You should open kill it and then try to launch the app again.
+	
+	
+## Further development
+* Support more device types
+* Setup the controller's WIFI credentials using Bluetooth directly from the app (or alternatively create an HTTP access point for the board)
+* Add sensor time interval configuration into the sensor control page - currently it is embedded in the controller's code
+* Pin's type classification (Binary output, PWM, ADC...) should be added to the app (board configuration) and be keeped in Firestore
