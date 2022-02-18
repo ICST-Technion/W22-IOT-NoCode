@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/utils/authentication.dart';
 
+
+// Sign in button widget
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({Key key}) : super(key: key);
 
@@ -34,6 +36,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
           setState(() {
             _isSigningIn = true;
           });
+
+          // Sign in with Google
           User user =
           await Authentication.signInWithGoogle(context: context);
 
@@ -41,6 +45,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             _isSigningIn = false;
           });
 
+          // If sign in was successful, move to the boards screen
           if (user != null) {
             Navigator.pushReplacementNamed(context, "/boards");
           }

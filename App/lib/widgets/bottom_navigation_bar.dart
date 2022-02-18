@@ -1,6 +1,9 @@
 import 'package:app/utils/authentication.dart';
 import 'package:flutter/material.dart';
 
+
+// Bottom navigation bar
+
 class BottomNavbar extends StatelessWidget {
   const BottomNavbar({Key key}) : super(key: key);
 
@@ -18,7 +21,16 @@ class BottomNavbar extends StatelessWidget {
           )
         ],
       onTap: (index) async {
-        if(index == 1) {
+
+        // If taped on sign out
+
+        if(index == 0) {
+          // if the current page is not /boards, navigate to boards
+          if(ModalRoute.of(context).settings.name != "/boards") {
+            Navigator.pushReplacementNamed(context, "/boards");
+          }
+        }
+        else if(index == 1) {
           await Authentication.signOut(context: context);
           const snackBar = SnackBar(content: Text('Signed out'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);

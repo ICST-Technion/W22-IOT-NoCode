@@ -5,6 +5,8 @@ import 'package:app/screens/boards_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+// Authentication handling
+
 class Authentication {
   static SnackBar customSnackBar({String content}) {
     return SnackBar(
@@ -34,10 +36,12 @@ class Authentication {
     return firebaseApp;
   }
 
+  // Handles the Google Sign-in process
   static Future<User> signInWithGoogle({BuildContext context}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User user;
 
+    // Web sign-in
     if (kIsWeb) {
       GoogleAuthProvider authProvider = GoogleAuthProvider();
 
@@ -49,21 +53,26 @@ class Authentication {
       } catch (e) {
         print(e);
       }
-    } else {
+    } else { // App sign-in (this is the relevant one for this project)
+
       final GoogleSignIn googleSignIn = GoogleSignIn();
 
+      // Try to sign in with Google
       final GoogleSignInAccount googleSignInAccount =
       await googleSignIn.signIn();
 
+      // If succeeded
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
 
+        // Get access token
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
 
+        // Use Google's credentials to sign in into Firebase
         try {
           final UserCredential userCredential =
           await auth.signInWithCredential(credential);
@@ -98,6 +107,7 @@ class Authentication {
     return user;
   }
 
+  // Sign out from Firebase and Google
   static Future<void> signOut({BuildContext context}) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 

@@ -4,10 +4,12 @@ import 'package:app/screens/scan_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/sign_in_screen.dart';
 
+// Application entry point
 void main() {
   runApp(const MyApp());
 }
 
+// Application widget
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
 

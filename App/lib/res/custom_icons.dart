@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Icon definitions
+
 class CustomIcons {
   static const IconData remove = Icons.delete;
   static const IconData servo = Icons.iso;

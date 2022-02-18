@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Color definitions
+
 class CustomColors {
   static final Color navy = Color(0xFF2C384A);
   static final Color orange = Color(0xFFF57C00);
