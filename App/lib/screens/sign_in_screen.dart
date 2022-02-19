@@ -49,7 +49,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     return const GoogleSignInButton();
                   }
-                  return CircularProgressIndicator(
+                  return const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
                       CustomColors.orange,
                     ),
