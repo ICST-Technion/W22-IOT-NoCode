@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
    <application
-        android:label="app"
+        android:label="IoT No Code"
         android:icon="@mipmap/ic_launcher">
        <meta-data
            android:name="flutterEmbedding"
