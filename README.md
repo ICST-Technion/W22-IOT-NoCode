@@ -13,7 +13,7 @@
     + [State update](#state-update)
     + [Sensors telemetry data updates](#sensors-telemetry-data-updates)
   * [Troubleshoot](#troubleshoot)
-  * [Further development](#further-development)
+  * [Running the app on an android or ios phone](#Running-the-app-on-an-android-or-ios-phone)
 
 
 ## Setup Google Cloud
@@ -199,9 +199,11 @@ Please make sure you also added the url of the library in your mos.yml file:
 ### Solution
 A previous proccess of mos.exe is still running on your computer. You should open kill it and then try to launch the app again.
 	
-	
-## Further development
-* Support more device types
-* Setup the controller's WIFI credentials using Bluetooth directly from the app (or alternatively create an HTTP access point for the board)
-* Add sensor time interval configuration into the sensor control page - currently it is embedded in the controller's code
-* Pin's type classification (Binary output, PWM, ADC...) should be added to the app (board configuration) and be keeped in Firestore
+## Running the app on an android or ios phone
+### Android phone
+In order to be able to run the app on an android phone, you need to enable developer options and USB debugging as explained here:
+	https://developer.android.com/studio/debug/dev-options <br/>
+Afterwards, you can plug-in your phone to your computer and run the app on it just like you would if you had a simulator running.
+### IOS phone
+Please follow the instructions in this tutorial: <br/>
+	https://stackoverflow.com/questions/54444538/how-do-i-run-test-my-flutter-app-on-a-real-device
