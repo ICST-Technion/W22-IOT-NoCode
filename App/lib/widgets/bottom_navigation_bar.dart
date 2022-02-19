@@ -35,6 +35,7 @@ class BottomNavbar extends StatelessWidget {
                 }
               }
               else if(index == 1) {
+                // logout
                 await Authentication.signOut(context: context);
                 const snackBar = SnackBar(content: Text('Signed out'));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
