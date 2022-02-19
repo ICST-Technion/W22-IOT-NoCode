@@ -6,8 +6,13 @@ import 'package:app/widgets/device_dialog.dart';
 class LedControlDialog extends StatefulWidget {
   const LedControlDialog({Key key, this.board, this.device, this.title}) : super(key: key);
 
+  // Devices' Board's information from DB
   final Map<String, dynamic> board;
+
+  // Device's information from DB
   final dynamic device;
+
+  // Dialog title
   final String title;
 
   @override
@@ -18,13 +23,13 @@ class _LedControlDialogState extends State<LedControlDialog> {
 
   final Map<String, int> _pins = {};
 
-  final Map<String, Color> _active_colors = {
+  final Map<String, Color> _activeColors = {
     "red": Colors.redAccent,
     "green": Colors.green,
     "blue": Colors.blueAccent
   };
 
-  final Map<String, Color> _inactive_colors = {
+  final Map<String, Color> _inactiveColors = {
     "red": const Color(0xBDCE7676),
     "green": const Color(0x4D6CC770),
     "blue": const Color(0x4D81A7C9)
@@ -68,24 +73,24 @@ class _LedControlDialogState extends State<LedControlDialog> {
         },
         buildFunction: (Map<String, Map<String, dynamic>> pinsMap) {
           return Column(children: [
-            _build_pin_row("red"),
+            _buildPinRow("red"),
             const SizedBox(height: 15),
-            _build_pin_row("green"),
+            _buildPinRow("green"),
             const SizedBox(height: 15),
-            _build_pin_row("blue")
+            _buildPinRow("blue")
           ]);
         }
     );
   }
 
-  Widget _build_pin_row(String color) {
+  Widget _buildPinRow(String color) {
     return Row(
       children: [
         Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                _build_switch(color)
+                _buildSwitch(color)
               ],
             )
         )
@@ -93,10 +98,10 @@ class _LedControlDialogState extends State<LedControlDialog> {
     );
   }
 
-  Widget _build_switch(String color) {
+  Widget _buildSwitch(String color) {
     return FlutterSwitch(
-      activeColor: _active_colors[color],
-      inactiveColor: _inactive_colors[color],
+      activeColor: _activeColors[color],
+      inactiveColor: _inactiveColors[color],
       width: 125.0,
       height: 55.0,
       valueFontSize: 25.0,

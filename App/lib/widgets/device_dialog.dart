@@ -44,36 +44,6 @@ class _DeviceDialogState extends State<DeviceDialog> {
   // The map may contain extra fields that will not be saved in the DB
   Map<String, Map<String, dynamic>> _pinsMap;
 
-  // Converts the pins map into a list that is ready to be sent to DB
-  List<Map<String, dynamic>> _pinsMapToDbList(Map<String, Map<String, dynamic>> pinsMap) {
-
-    return pinsMap.values.map((e) => {
-      "name": e["name"],
-      "number": e["number"],
-      "value": e["value"]
-    }).toList();
-  }
-
-  // Converts the initial pins structure list into the pins map
-  void _pinsStructureToMap(List<Map<String, dynamic>> pinsList) {
-
-    _pinsMap = {};
-
-    for(var i=0; i<pinsList.length; ++i) {
-      var pin = pinsList[i];
-      _pinsMap[pin["name"]] = {...pin};
-    }
-  }
-
-  // Fills the initial values from the DB into the pins map
-  void _fillDbValues(List<dynamic> dbPins) {
-
-    for (var pin in dbPins) {
-      _pinsMap[pin["name"]]["number"] = pin["number"];
-      _pinsMap[pin["name"]]["value"] = pin["value"];
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -177,5 +147,35 @@ class _DeviceDialogState extends State<DeviceDialog> {
       ),
       actions: actions,
     );
+  }
+
+  // Converts the pins map into a list that is ready to be sent to DB
+  List<Map<String, dynamic>> _pinsMapToDbList(Map<String, Map<String, dynamic>> pinsMap) {
+
+    return pinsMap.values.map((e) => {
+      "name": e["name"],
+      "number": e["number"],
+      "value": e["value"]
+    }).toList();
+  }
+
+  // Converts the initial pins structure list into the pins map
+  void _pinsStructureToMap(List<Map<String, dynamic>> pinsList) {
+
+    _pinsMap = {};
+
+    for(var i=0; i<pinsList.length; ++i) {
+      var pin = pinsList[i];
+      _pinsMap[pin["name"]] = {...pin};
+    }
+  }
+
+  // Fills the initial values from the DB into the pins map
+  void _fillDbValues(List<dynamic> dbPins) {
+
+    for (var pin in dbPins) {
+      _pinsMap[pin["name"]]["number"] = pin["number"];
+      _pinsMap[pin["name"]]["value"] = pin["value"];
+    }
   }
 }

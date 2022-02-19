@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 
+// QR reading screen
 
 enum DetectionState {empty, invalid, detected}
 
@@ -32,7 +33,7 @@ class _ScanScreen extends State<ScanScreen> {
 
   CameraController _controller;
   DetectionState _currentState = DetectionState.empty;
-  bool _scanInProgess = false;
+  bool _scanInProgress = false;
   bool _barcodeDetected = false;
 
   @override
@@ -105,13 +106,15 @@ class _ScanScreen extends State<ScanScreen> {
   /// Callback to handle each camera frame
   void _handleCameraImage(CameraImage image) async {
     // Drop the frame if we are still scanning
-    if (_scanInProgess || _barcodeDetected) return;
+    if (_scanInProgress || _barcodeDetected) return;
 
-    _scanInProgess = true;
+    _scanInProgress = true;
 
     // Collect all planes into a single buffer
     final WriteBuffer allBytesBuffer = WriteBuffer();
-    image.planes.forEach((Plane plane) => allBytesBuffer.putUint8List(plane.bytes));
+    for (var plane in image.planes) {
+      allBytesBuffer.putUint8List(plane.bytes);
+    }
     final Uint8List allBytes = allBytesBuffer.done().buffer.asUint8List();
 
     // Convert the image buffer into a Firebase detector frame
@@ -142,10 +145,12 @@ class _ScanScreen extends State<ScanScreen> {
         Navigator.of(context).pop(device);
       }
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
       _reportDetectionState(DetectionState.invalid);
     } finally {
-      _scanInProgess = false;
+      _scanInProgress = false;
     }
   }
 
@@ -188,5 +193,4 @@ class _ScanScreen extends State<ScanScreen> {
 
     return json;
   }
-
 }

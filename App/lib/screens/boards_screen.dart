@@ -51,7 +51,7 @@ class _BoardsScreenState extends State<BoardsScreen> {
     );
   }
 
-  /// List devices owned by the authenticated user
+  /// List the boards owned by the authenticated user
   Widget _queryBoardList() {
 
     if (_user == null) {
@@ -125,5 +125,4 @@ class _BoardsScreenState extends State<BoardsScreen> {
     const snackBar = SnackBar(content: Text('Registering board'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
 }

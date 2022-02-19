@@ -25,6 +25,21 @@ class SettingsDialog extends StatefulWidget {
 
 class _SettingsDialogState extends State<SettingsDialog> {
 
+  @override
+  Widget build(BuildContext context) {
+    return DeviceDialog(
+        board: widget.board,
+        device: widget.device,
+        title: widget.title,
+        removeButton: true,
+        pinsStructure: widget.pinsStructure,
+        buildFunction: (Map<String, Map<String, dynamic>> pinsMap) {
+          return Column(children: _buildPinRows(pinsMap));
+        }
+    );
+  }
+
+
   List<Widget> _buildPinRows(Map<String, Map<String, dynamic>> pinsMap) {
 
     List<Widget> widgets = [];
@@ -63,17 +78,4 @@ class _SettingsDialogState extends State<SettingsDialog> {
     return widgets;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return DeviceDialog(
-        board: widget.board,
-        device: widget.device,
-        title: widget.title,
-        removeButton: true,
-        pinsStructure: widget.pinsStructure,
-        buildFunction: (Map<String, Map<String, dynamic>> pinsMap) {
-          return Column(children: _buildPinRows(pinsMap));
-        }
-    );
-  }
 }

@@ -5,8 +5,13 @@ import 'package:app/widgets/device_dialog.dart';
 class ServoControlDialog extends StatefulWidget {
   const ServoControlDialog({Key key, this.board, this.device, this.title}) : super(key: key);
 
+  // Devices' Board's information from DB
   final Map<String, dynamic> board;
+
+  // Device's information from DB
   final dynamic device;
+
+  // Dialog title
   final String title;
 
   @override
@@ -18,8 +23,7 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
   KnobController _controller;
   double _knobValue = 0;
 
-  void valueChangedListener(double value) {
-
+  void _valueChangedListener(double value) {
     setState(() {
       _knobValue = value;
     });
@@ -27,7 +31,7 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
 
   @override
   void dispose() {
-    _controller.removeOnValueChangedListener(valueChangedListener);
+    _controller.removeOnValueChangedListener(_valueChangedListener);
     super.dispose();
   }
 
@@ -57,7 +61,7 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
           endAngle: 180,
         );
 
-        _controller.addOnValueChangedListener(valueChangedListener);
+        _controller.addOnValueChangedListener(_valueChangedListener);
       },
       onPreSave: (Map<String, Map<String, dynamic>> pinsMap) {
         pinsMap["control"]["value"] = _knobValue.toInt();
@@ -66,13 +70,13 @@ class _ServoControlDialogState extends State<ServoControlDialog> {
         return Column(children: [
             Text("Value: " + _knobValue.round().toString()),
             const SizedBox(height: 20),
-            Center(child: build_knob())
+            Center(child: _buildKnob())
         ]);
       }
     );
   }
 
-  Widget build_knob() {
+  Widget _buildKnob() {
     return Knob(
         controller: _controller,
         width: 100,

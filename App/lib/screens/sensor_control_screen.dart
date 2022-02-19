@@ -9,8 +9,13 @@ import 'package:flutter/material.dart';
 class SensorControlScreen extends StatefulWidget {
   const SensorControlScreen({Key key, this.board, this.device, this.title}) : super(key: key);
 
+  // Devices' Board's information from DB
   final Map<String, dynamic> board;
+
+  // Device's information from DB
   final dynamic device;
+
+  // Dialog title
   final String title;
 
   @override
@@ -53,11 +58,21 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           title: AppBarTitle(title: widget.title),
         ),
         bottomNavigationBar: const BottomNavbar(),
-        body: buildBody()
+        body: _buildBody()
     );
   }
 
-  Widget buildChartWrapper() {
+  Widget _buildBody() {
+
+    var children = [
+      _buildChartWrapper(),
+      _buildSwitchWrapper()
+    ];
+
+    return Column(children: children);
+  }
+
+  Widget _buildChartWrapper() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('sensors').doc(widget.board["id"]).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -70,7 +85,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           default:
             var data = snapshot.data.data() as Map<String, dynamic>;
             var devices = data["devices"] as List<dynamic>;
-            var sensor = null;
+            dynamic sensor;
 
             for (var d in devices) {
               if(d["name"] == widget.device["name"]) {
@@ -86,7 +101,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
             }
             else {
               return Column(children: [
-                Text("Sensor value: " + (sensor["data"] as List).last["value"].toString(), style: TextStyle(
+                Text("Sensor value: " + (sensor["data"] as List).last["value"].toString(), style: const TextStyle(
                   fontSize: 20
                 ),),
                 buildChart(sensor),
@@ -97,7 +112,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
     );
   }
 
-  Widget build_switch_wrapper() {
+  Widget _buildSwitchWrapper() {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('boards').doc(widget.board["id"]).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -110,8 +125,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           default:
             var data = snapshot.data.data() as Map<String, dynamic>;
             var devices = data["devices"] as List<dynamic>;
-
-            var sensor = null;
+            dynamic sensor;
 
             for (var d in devices) {
               if (d["name"] == widget.device["name"]) {
@@ -120,7 +134,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
               }
             }
 
-            var children = [buildActiveSwitch(sensor["active"])];
+            var children = [_buildActiveSwitch(sensor["active"])];
 
             return Column(
                 children: children
@@ -130,18 +144,7 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
     );
   }
 
-
-  Widget buildBody() {
-
-    var children = [
-      buildChartWrapper(),
-      build_switch_wrapper()
-    ];
-
-    return Column(children: children);
-  }
-
-  Widget buildActiveSwitch(active) {
+  Widget _buildActiveSwitch(active) {
     return FlutterSwitch(
       activeColor: Colors.green,
       inactiveColor: const Color(0x4D6CC770),
@@ -165,7 +168,6 @@ class _SensorControlScreenState extends State<SensorControlScreen> {
           }
 
           // send the updated sensor config which will cause a stream update
-
           FirebaseFirestore.instance.collection("board-configs").doc(widget.board["id"]).update({
             "devices": devices
           });

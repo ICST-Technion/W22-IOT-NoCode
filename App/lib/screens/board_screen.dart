@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app/res/custom_colors.dart';
 import 'package:app/widgets/app_bar_title.dart';
@@ -66,21 +67,21 @@ class _BoardScreenState extends State<BoardScreen> {
             backgroundColor: CustomColors.ledColor,
             foregroundColor: Colors.white,
             label: 'LED RGB',
-            onTap: () {addDeviceDialog("led", boardDocument.id);}
+            onTap: () {_showAddDeviceDialog("led", boardDocument.id);}
           ),
           SpeedDialChild(
               child: const Icon(CustomIcons.sensor, size: 40),
               backgroundColor: CustomColors.sensorColor,
               foregroundColor: Colors.white,
               label: 'Sensor',
-              onTap: () {addDeviceDialog("sensor", boardDocument.id);}
+              onTap: () {_showAddDeviceDialog("sensor", boardDocument.id);}
           ),
           SpeedDialChild(
               child: const Icon(CustomIcons.servo, size: 40),
               backgroundColor: CustomColors.servoColor,
               foregroundColor: Colors.white,
               label: 'Servo motor',
-              onTap: () {addDeviceDialog("servo", boardDocument.id);}
+              onTap: () {_showAddDeviceDialog("servo", boardDocument.id);}
           )
         ],
       ),
@@ -161,7 +162,9 @@ class _BoardScreenState extends State<BoardScreen> {
                   );
                 }
                 else {
-                  print("Not a legal device type");
+                  if (kDebugMode) {
+                    print("Not a legal device type");
+                  }
                 }
                 return Container(
                   decoration: BoxDecoration(
@@ -210,13 +213,13 @@ class _BoardScreenState extends State<BoardScreen> {
                     },
                   ),
                 );
-                }).toList());
+            }).toList());
         }
       },
     );
   }
 
-  void addDeviceDialog(String deviceType, String boardId) => showDialog(context: context, builder: (BuildContext context) {
+  void _showAddDeviceDialog(String deviceType, String boardId) => showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("Device name"),
         content: TextField(
@@ -238,5 +241,5 @@ class _BoardScreenState extends State<BoardScreen> {
           decoration: const InputDecoration(hintText: "Enter device's name"),
         ),
       );
-    });
+  });
 }
