@@ -7,9 +7,16 @@ import 'package:app/widgets/device_dialog.dart';
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({Key key, this.board, this.device, this.title, this.pinsStructure}) : super(key: key);
 
+  // Devices' Board's information from DB
   final Map<String, dynamic> board;
+
+  // Device's information from DB
   final dynamic device;
+
+  // Dialog title
   final String title;
+
+  // Pins structure
   final List<Map<String, dynamic>> pinsStructure;
 
   @override
