@@ -6,8 +6,13 @@ import 'package:app/widgets/device_settings/settings_dialog.dart';
 class LedSettingsDialog extends StatefulWidget {
   const LedSettingsDialog({Key key, this.board, this.device, this.title}) : super(key: key);
 
+  // Devices' Board's information from DB
   final Map<String, dynamic> board;
+
+  // Device's information from DB
   final dynamic device;
+
+  // Dialog title
   final String title;
 
   @override
