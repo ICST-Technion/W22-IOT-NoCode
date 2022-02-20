@@ -188,11 +188,11 @@ class _BoardScreenState extends State<BoardScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(icon, size: 50),
+                          Icon(icon, size: 35),
                           Text(device["name"])
                         ],
                       ),
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(15.0),
                     ),
                     onTap: () {
                       // For the sensor we navigate to a new route
