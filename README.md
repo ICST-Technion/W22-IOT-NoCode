@@ -70,6 +70,8 @@ Use `./functions_deploy` script to deploy the cloud functions and the database r
 ## Setup Mongoose workspace
 To be able to execute `mos` commands, you should install Mongoose OS client on your computer.
 
+Please check the following tutorial for help: https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
+
 ### Useful commands
 * `mos build` - builds the base javascript engine - should be done only once
 * `mos flash` - sends the engine to the device
@@ -77,8 +79,6 @@ To be able to execute `mos` commands, you should install Mongoose OS client on y
 * `mos put fs/init.js` sends the updated .js code to the device - should be called on each change we want to send. A reboot needs to be done in order to make the device run the new code.
 * `mos call Sys.Reboot` - restarts the device with the updated code
 * `mos wifi <SSID> <password>` - setups the wifi on the device and reboots it. Write your wifi SSID and the password instead if "<SSID>" and "<password>".
-
-Please check the following tutorial for help: https://mongoose-os.com/docs/mongoose-os/quickstart/setup.md
 
 
 ## Adding a new ESP32 controller
